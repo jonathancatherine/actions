@@ -16449,6 +16449,7 @@ module.exports = /^#!.*/;
 const core = __webpack_require__(357);
 const exec = __webpack_require__(425);
 const github = __webpack_require__(955);
+var hashlib = __webpack_require__(535);
 
 (async () => {
     try {
@@ -16471,7 +16472,11 @@ const github = __webpack_require__(955);
 
         const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "test", repo: repo });
         const fileSha = JSON.stringify(file2.data.sha);
-        console.log(`File: ${fileSha}`);
+        console.log(`File test: ${fileSha}`);
+
+        const fileMaster = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "master", repo: repo });
+        const fileMasterSha = JSON.stringify(fileMaster.data.sha);
+        console.log(`File master: ${fileMasterSha}`);
 
         var b = Buffer.from(fileSha)
         var content = b.toString('base64');
@@ -16485,7 +16490,7 @@ const github = __webpack_require__(955);
             branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" },
-            sha: "e7ffddc6ac75658e43b9101bcdacf46b885c1fd1"
+            sha: file2.data.sha
         });
 
 
@@ -22907,6 +22912,14 @@ function hasNextPage (link) {
   deprecate(`octokit.hasNextPage() – You can use octokit.paginate or async iterators instead: https://github.com/octokit/rest.js#pagination.`)
   return getPageLinks(link).next
 }
+
+
+/***/ }),
+
+/***/ 535:
+/***/ (function(module) {
+
+module.exports = eval("require")("hashlib");
 
 
 /***/ }),

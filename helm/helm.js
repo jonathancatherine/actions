@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
 const github = require('@actions/github');
+var hashlib = require("hashlib");
 
 (async () => {
     try {
@@ -23,7 +24,11 @@ const github = require('@actions/github');
 
         const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "test", repo: repo });
         const fileSha = JSON.stringify(file2.data.sha);
-        console.log(`File: ${fileSha}`);
+        console.log(`File test: ${fileSha}`);
+
+        const fileMaster = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "master", repo: repo });
+        const fileMasterSha = JSON.stringify(fileMaster.data.sha);
+        console.log(`File master: ${fileMasterSha}`);
 
         var b = Buffer.from(fileSha)
         var content = b.toString('base64');
@@ -37,7 +42,7 @@ const github = require('@actions/github');
             branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" },
-            sha: "e7ffddc6ac75658e43b9101bcdacf46b885c1fd1"
+            sha: file2.data.sha
         });
 
 
