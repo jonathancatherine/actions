@@ -14,9 +14,11 @@ const github = require('@actions/github');
 
 
         const payload = JSON.stringify(github.context.payload, undefined, 2);
-        //console.log(`The event payload: ${payload}`);
+        console.log(`The event owner: ${owner}`);
+        console.log(`The event repo: ${repo}`);
+        console.log(`The event branch: ${branch}`);
 
-        const ref = octokit.git.getRef({ owner, repo, branch });
+        const ref = await octokit.git.getRef({ owner, repo, branch });
 
         //console.log(`Ref: ${ref}`);
     } catch (error) {
