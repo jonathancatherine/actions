@@ -16466,7 +16466,7 @@ const github = __webpack_require__(955);
         console.log(`The event repo: ${repo}`);
         console.log(`The event branch: ${ref}`);
 
-        const ref2 = await octokit.git.getRef({ owner, repo, ref });
+        const ref2 = await octokit.git.getRef({ owner: owner, ref: ref, repo: repo });
 
         //console.log(`Ref: ${ref}`);
     } catch (error) {
