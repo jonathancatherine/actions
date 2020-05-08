@@ -16460,7 +16460,6 @@ const github = __webpack_require__(955);
         const branch = core.getInput('branch');
 
 
-
         const payload = JSON.stringify(github.context.payload, undefined, 2);
         console.log(`The event owner: ${owner}`);
         console.log(`The event repo: ${repo}`);
@@ -16471,6 +16470,20 @@ const github = __webpack_require__(955);
         const refstr = JSON.stringify(reference.data);
 
         console.log(`Ref: ${refstr}`);
+
+        const content = btoa('guru')
+
+        const replaceFile = await octokit.repos.createOrUpdateFile({
+            owner: owner,
+            repo: repo,
+            path: "file.txt",
+            message: "message",
+            content: content,
+            committer: { name: "Jonathan", email: "test@email.com" },
+            author: { name: "Jonathan", email: "test@email.com" }
+        });
+
+
     } catch (error) {
         core.setFailed(error.message);
     }
