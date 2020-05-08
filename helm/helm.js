@@ -31,7 +31,7 @@ const github = require('@actions/github');
             path: "file.txt",
             message: "message",
             content: content,
-            branch: test,
+            branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" }
         });

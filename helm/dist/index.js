@@ -16479,7 +16479,7 @@ const github = __webpack_require__(955);
             path: "file.txt",
             message: "message",
             content: content,
-            branch: test,
+            branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" }
         });
