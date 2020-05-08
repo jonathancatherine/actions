@@ -16467,7 +16467,7 @@ const github = __webpack_require__(955);
 
         const reference = await octokit.git.getRef({ owner: owner, ref: branch, repo: repo });
 
-        const refstr = JSON.stringify(reference.data);
+        const refstr = JSON.stringify(reference.data.object.sha);
 
         console.log(`Ref: ${refstr}`);
 
@@ -16482,7 +16482,8 @@ const github = __webpack_require__(955);
             content: content,
             branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
-            author: { name: "Jonathan", email: "test@email.com" }
+            author: { name: "Jonathan", email: "test@email.com" },
+            sha: reference.data.object.sha
         });
 
 
