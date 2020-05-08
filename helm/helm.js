@@ -27,8 +27,8 @@ const github = require('@actions/github');
         // var content = b.toString('base64');
 
         const file = await octokit.repos.getContents({ owner: owner, ref: "test", repo: repo, path: "file.txt" });
-        const filestr = JSON.stringify(file);
-        console.log(`Ref: ${filestr}`);
+        //const filestr = JSON.stringify(file);
+        //console.log(`Ref: ${filestr}`);
 
         const replaceFile = await octokit.repos.createOrUpdateFile({
             owner: owner,
