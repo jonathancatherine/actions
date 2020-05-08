@@ -1511,7 +1511,7 @@ const exec = __webpack_require__(425);
         const registryPath = core.getInput('registryPath');
         const dockerImageName = core.getInput('dockerImageName');
         const registryUsername = core.getInput('registryUsername');
-        const registryPassword = core.getInput('registryPassword');
+        const registryPassword = process.env.REGISTRY_PASSWORD || core.getInput('registryPassword');
 
         const registry = `${registryHost}/${registryPath}/${dockerImageName}`;
 
