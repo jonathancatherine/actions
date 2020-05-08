@@ -18,7 +18,7 @@ const github = require('@actions/github');
         console.log(`The event repo: ${repo}`);
         console.log(`The event branch: ${ref}`);
 
-        const ref = await octokit.git.getRef({ owner, repo, ref });
+        const ref2 = await octokit.git.getRef({ owner, repo, ref });
 
         //console.log(`Ref: ${ref}`);
     } catch (error) {
