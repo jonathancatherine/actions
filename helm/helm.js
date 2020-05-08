@@ -23,24 +23,29 @@ const github = require('@actions/github');
 
         console.log(`Ref: ${refstr}`);
 
-        // var b = Buffer.from("dfgdfgdfg")
-        // var content = b.toString('base64');
+
 
         const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "test", repo: repo });
-        const filestr = JSON.stringify(file2);
-        console.log(`File: ${filestr}`);
+        const fileSha = JSON.stringify(file2.data.sha);
+        console.log(`File: ${fileSha}`);
 
-        // const replaceFile = await octokit.repos.createOrUpdateFile({
-        //     owner: owner,
-        //     repo: repo,
-        //     path: "file.txt",
-        //     message: "message",
-        //     content: "dmdkZmdkZmc=",
-        //     branch: "test",
-        //     committer: { name: "Jonathan", email: "test@email.com" },
-        //     author: { name: "Jonathan", email: "test@email.com" },
-        //     sha: reference.data.object.sha
-        // });
+        const tag = Math.round(Math.random() * 10);
+        console.log(`File: ${tag}`);
+
+        var b = Buffer.from(tag)
+        var content = b.toString('base64');
+
+        const replaceFile = await octokit.repos.createOrUpdateFile({
+            owner: owner,
+            repo: repo,
+            path: "file.txt",
+            message: "message",
+            content: "dmdkZmdkZmc=",
+            branch: "test",
+            committer: { name: "Jonathan", email: "test@email.com" },
+            author: { name: "Jonathan", email: "test@email.com" },
+            sha: fileSha
+        });
 
 
     } catch (error) {
