@@ -16477,10 +16477,7 @@ const github = __webpack_require__(955);
         const fileSha = JSON.stringify(file2.data.sha);
         console.log(`File: ${fileSha}`);
 
-        const tag = Math.round(Math.random() * 10);
-        console.log(`File: ${tag}`);
-
-        var b = Buffer.from(tag)
+        var b = Buffer.from(fileSha)
         var content = b.toString('base64');
 
         const replaceFile = await octokit.repos.createOrUpdateFile({
