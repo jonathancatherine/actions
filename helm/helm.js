@@ -20,7 +20,7 @@ const github = require('@actions/github');
 
         const reference = await octokit.git.getRef({ owner: owner, ref: branch, repo: repo });
 
-        const refstr = JSON.stringify(reference.data, undefined, 2);
+        const refstr = JSON.stringify(reference.data);
 
         console.log(`Ref: ${refstr}`);
     } catch (error) {
