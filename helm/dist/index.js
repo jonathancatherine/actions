@@ -34,7 +34,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(410);
+/******/ 		return __webpack_require__(184);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -160,6 +160,39 @@ function escapeProperty(s) {
 /***/ (function(module) {
 
 module.exports = require("child_process");
+
+/***/ }),
+
+/***/ 184:
+/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
+
+const core = __webpack_require__(357);
+const exec = __webpack_require__(425);
+
+(async () => {
+    try {
+        const directory = core.getInput('directory');
+        const registryHost = core.getInput('registryHost');
+        const registryPath = core.getInput('registryPath');
+        const dockerImageName = core.getInput('dockerImageName');
+        const registryUsername = core.getInput('registryUsername');
+        const registryPassword = process.env.REGISTRY_PASSWORD || core.getInput('registryPassword');
+
+        const registry = `${registryHost}/${registryPath}/${dockerImageName}`;
+
+        const tag = Math.round(Math.random() * 10);
+        const tagBuild = `${registry}:${tag}`;
+        const tagLatest = `${registry}:latest`;
+
+        await exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
+        await exec.exec(`docker build --cache-from ${tagLatest} -t ${tagBuild} ${directory}`);
+        await exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
+        await exec.exec(`docker push ${tagBuild}`);
+        await exec.exec(`docker push ${tagLatest}`);
+    } catch (error) {
+        core.setFailed(error.message);
+    }
+})();
 
 /***/ }),
 
@@ -1495,39 +1528,6 @@ function isUnixExecutable(stats) {
         ((stats.mode & 64) > 0 && stats.uid === process.getuid()));
 }
 //# sourceMappingURL=io-util.js.map
-
-/***/ }),
-
-/***/ 410:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(357);
-const exec = __webpack_require__(425);
-
-(async () => {
-    try {
-        const directory = core.getInput('directory');
-        const registryHost = core.getInput('registryHost');
-        const registryPath = core.getInput('registryPath');
-        const dockerImageName = core.getInput('dockerImageName');
-        const registryUsername = core.getInput('registryUsername');
-        const registryPassword = process.env.REGISTRY_PASSWORD || core.getInput('registryPassword');
-
-        const registry = `${registryHost}/${registryPath}/${dockerImageName}`;
-
-        const tag = Math.round(Math.random() * 10);
-        const tagBuild = `${registry}:${tag}`;
-        const tagLatest = `${registry}:latest`;
-
-        await exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
-        await exec.exec(`docker build --cache-from ${tagLatest} -t ${tagBuild} ${directory}`);
-        await exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
-        await exec.exec(`docker push ${tagBuild}`);
-        await exec.exec(`docker push ${tagLatest}`);
-    } catch (error) {
-        core.setFailed(error.message);
-    }
-})();
 
 /***/ }),
 
