@@ -16471,7 +16471,7 @@ const github = __webpack_require__(955);
 
         console.log(`Ref: ${refstr}`);
 
-        const content = btoa('guru')
+        const content = "ZXN3IGNkcmY0N2pzZA==";
 
         const replaceFile = await octokit.repos.createOrUpdateFile({
             owner: owner,
