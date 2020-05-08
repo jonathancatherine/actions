@@ -23,7 +23,7 @@ const github = require('@actions/github');
 
         console.log(`Ref: ${refstr}`);
 
-        var b = new Buffer('JavaScript');
+        var b = Buffer.from("dfgdfgdfg")
         var content = b.toString('base64');
 
         const file = await octokit.repos.getContents({ owner: owner, ref: branch, repo: repo, path: file.txt });
