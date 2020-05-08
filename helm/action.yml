@@ -1,0 +1,9 @@
+name: "Helm build"
+description: "Build helm project"
+inputs:
+  directory:
+    description: "Location of helm"
+    required: true
+runs:
+  using: "node12"
+  main: "dist/index.js"
