@@ -16471,8 +16471,8 @@ const github = __webpack_require__(955);
 
         console.log(`Ref: ${refstr}`);
 
-        var b = Buffer.from("dfgdfgdfg")
-        var content = b.toString('base64');
+        // var b = Buffer.from("dfgdfgdfg")
+        // var content = b.toString('base64');
 
         const file = await octokit.repos.getContents({ owner: owner, ref: branch, repo: repo, path: file.txt });
         const filestr = JSON.stringify(file);
@@ -16483,7 +16483,7 @@ const github = __webpack_require__(955);
             repo: repo,
             path: "file.txt",
             message: "message",
-            content: content,
+            content: "dmdkZmdkZmc=",
             branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" },
