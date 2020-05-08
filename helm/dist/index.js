@@ -16478,17 +16478,17 @@ const github = __webpack_require__(955);
         //const filestr = JSON.stringify(file);
         //console.log(`Ref: ${filestr}`);
 
-        const replaceFile = await octokit.repos.createOrUpdateFile({
-            owner: owner,
-            repo: repo,
-            path: "file.txt",
-            message: "message",
-            content: "dmdkZmdkZmc=",
-            branch: "test",
-            committer: { name: "Jonathan", email: "test@email.com" },
-            author: { name: "Jonathan", email: "test@email.com" },
-            sha: reference.data.object.sha
-        });
+        // const replaceFile = await octokit.repos.createOrUpdateFile({
+        //     owner: owner,
+        //     repo: repo,
+        //     path: "file.txt",
+        //     message: "message",
+        //     content: "dmdkZmdkZmc=",
+        //     branch: "test",
+        //     committer: { name: "Jonathan", email: "test@email.com" },
+        //     author: { name: "Jonathan", email: "test@email.com" },
+        //     sha: reference.data.object.sha
+        // });
 
 
     } catch (error) {
