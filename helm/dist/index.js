@@ -16474,6 +16474,10 @@ const github = __webpack_require__(955);
         var b = new Buffer('JavaScript');
         var content = b.toString('base64');
 
+        const file = await octokit.repos.getContents({ owner: owner, ref: branch, repo: repo, path: file.txt });
+        const filestr = JSON.stringify(file);
+        console.log(`Ref: ${filestr}`);
+
         const replaceFile = await octokit.repos.createOrUpdateFile({
             owner: owner,
             repo: repo,
