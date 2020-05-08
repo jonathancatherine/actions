@@ -26,7 +26,7 @@ const github = require('@actions/github');
         // var b = Buffer.from("dfgdfgdfg")
         // var content = b.toString('base64');
 
-        const file2 = await octokit.repos.getContents({ owner: owner, repo: repo, path: "file.txt", ref: "test" });
+        const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "test", repo: repo });
         const filestr = JSON.stringify(file2);
         console.log(`File: ${filestr}`);
 
