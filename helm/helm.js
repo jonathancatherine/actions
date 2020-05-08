@@ -18,12 +18,8 @@ const github = require('@actions/github');
         console.log(`The event branch: ${branch}`);
 
         const reference = await octokit.git.getRef({ owner: owner, ref: branch, repo: repo });
-
         const refstr = JSON.stringify(reference.data.object.sha);
-
         console.log(`Ref: ${refstr}`);
-
-
 
         const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "test", repo: repo });
         const fileSha = JSON.stringify(file2.data.sha);
@@ -37,11 +33,11 @@ const github = require('@actions/github');
             repo: repo,
             path: "file.txt",
             message: "message",
-            content: "dmdkZmdkZmc=",
+            content: content,
             branch: "test",
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" },
-            sha: fileSha
+            sha: "e7ffddc6ac75658e43b9101bcdacf46b885c1fd1"
         });
 
 
