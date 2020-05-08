@@ -23,7 +23,8 @@ const github = require('@actions/github');
 
         console.log(`Ref: ${refstr}`);
 
-        const content = "ZXN3IGNkcmY0N2pzZA==";
+        var b = new Buffer('JavaScript');
+        var content = b.toString('base64');
 
         const replaceFile = await octokit.repos.createOrUpdateFile({
             owner: owner,
