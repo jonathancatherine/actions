@@ -16468,7 +16468,7 @@ const github = __webpack_require__(955);
 
         const reference = await octokit.git.getRef({ owner: owner, ref: branch, repo: repo });
 
-        const refstr = JSON.stringify(reference);
+        const refstr = JSON.stringify(reference, undefined, 2);
 
         console.log(`Ref: ${refstr}`);
     } catch (error) {
