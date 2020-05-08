@@ -20,7 +20,7 @@ const github = require('@actions/github');
 
         const ref2 = await octokit.git.getRef({ owner: owner, ref: ref, repo: repo });
 
-        //console.log(`Ref: ${ref}`);
+        console.log(`Ref: ${ref2}`);
     } catch (error) {
         core.setFailed(error.message);
     }
