@@ -16475,7 +16475,7 @@ const github = __webpack_require__(955);
 
         var fileModifiedContentBuffer = Buffer.from(fileOriginalContentString + "appen1");
         var newContent = fileModifiedContentBuffer.toString('base64');
-
+        console.log(`${newContent}`);
 
         // const replaceFile = await octokit.repos.createOrUpdateFile({
         //     owner: owner,
