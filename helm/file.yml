@@ -1,0 +1,15 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: admin
+  namespace: budget
+spec:
+  chart:
+    git: git@github.com:jonathancatherine/helm
+    ref: master
+    path: charts/admin
+  values:
+    replicaCount: 1
+    image:
+      repository: registry.gitlab.com/jonathancatherine/registry/admin
+      tag: 20200111-161215-04a5b47

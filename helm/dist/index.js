@@ -16473,21 +16473,25 @@ const github = __webpack_require__(955);
         const fileOriginalContentBuffer = Buffer.from(fileOriginalContentBase64, 'base64');
         const fileOriginalContentString = fileOriginalContentBuffer.toString('utf8');
 
-        var fileModifiedContentBuffer = Buffer.from(fileOriginalContentString + "appen1");
-        var newContent = fileModifiedContentBuffer.toString('base64');
-        console.log(`${newContent}`);
+        const parsedYaml = yaml.parse(fileOriginalContentString);
+        parsedYaml.spec.values.image.tag = fileSha;
+        const yamlAsString = yaml.stringify(parsedYaml);
 
-        // const replaceFile = await octokit.repos.createOrUpdateFile({
-        //     owner: owner,
-        //     repo: repo,
-        //     path: "file.txt",
-        //     message: "message",
-        //     content: newContent,
-        //     branch: "test",
-        //     committer: { name: "Jonathan", email: "test@email.com" },
-        //     author: { name: "Jonathan", email: "test@email.com" },
-        //     sha: fileSha
-        // });
+        var fileModifiedContentBuffer = Buffer.from(yamlAsString);
+        var newContentBase64 = fileModifiedContentBuffer.toString('base64');
+        console.log(`${newContentBase64}`);
+
+        const replaceFile = await octokit.repos.createOrUpdateFile({
+            owner: owner,
+            repo: repo,
+            path: "file.txt",
+            message: "message",
+            content: newContentBase64,
+            branch: "test",
+            committer: { name: "Jonathan", email: "test@email.com" },
+            author: { name: "Jonathan", email: "test@email.com" },
+            sha: fileSha
+        });
 
 
     } catch (error) {
