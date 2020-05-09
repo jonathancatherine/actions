@@ -17497,10 +17497,10 @@ const yaml = __webpack_require__(895);
         const replaceFile = await octokit.repos.createOrUpdateFile({
             owner: owner,
             repo: repo,
-            path: "file.txt",
+            path: filePath,
             message: "message",
             content: newContentBase64,
-            branch: "test",
+            branch: branch,
             committer: { name: "Jonathan", email: "test@email.com" },
             author: { name: "Jonathan", email: "test@email.com" },
             sha: fileSha
