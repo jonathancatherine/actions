@@ -16458,6 +16458,7 @@ const github = __webpack_require__(955);
         const owner = core.getInput('owner');
         const repo = core.getInput('repo');
         const branch = core.getInput('branch');
+        const filePath = core.getInput('filePath');
 
         const payload = JSON.stringify(github.context.payload, undefined, 2);
 
@@ -16465,7 +16466,7 @@ const github = __webpack_require__(955);
         // const refstr = JSON.stringify(reference.data.object.sha);
         // console.log(`Ref: ${refstr}`);
 
-        const file = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: branch, repo: repo });
+        const file = await octokit.repos.getContents({ owner: owner, path: filePath, ref: branch, repo: repo });
         const fileSha = file.data.sha;
         const fileOriginalContentBase64 = file.data.content;
 
@@ -16476,17 +16477,17 @@ const github = __webpack_require__(955);
         var newContent = fileModifiedContentBuffer.toString('base64');
 
 
-        const replaceFile = await octokit.repos.createOrUpdateFile({
-            owner: owner,
-            repo: repo,
-            path: "file.txt",
-            message: "message",
-            content: newContent,
-            branch: "test",
-            committer: { name: "Jonathan", email: "test@email.com" },
-            author: { name: "Jonathan", email: "test@email.com" },
-            sha: fileSha
-        });
+        // const replaceFile = await octokit.repos.createOrUpdateFile({
+        //     owner: owner,
+        //     repo: repo,
+        //     path: "file.txt",
+        //     message: "message",
+        //     content: newContent,
+        //     branch: "test",
+        //     committer: { name: "Jonathan", email: "test@email.com" },
+        //     author: { name: "Jonathan", email: "test@email.com" },
+        //     sha: fileSha
+        // });
 
 
     } catch (error) {
