@@ -1,5 +1,5 @@
 import * as github from "@actions/github";
-import * as utils from "../src/utils";
+import * as util from "./util";
 import * as webhooks from '@octokit/webhooks'
 
 export interface RemoteFileReplaceOptions {
@@ -26,7 +26,7 @@ export async function replaceRemoteFile(options: RemoteFileReplaceOptions): Prom
     if (!Array.isArray(data)) {
         fileSha = data.sha;
         if (data.content) {
-            fileOriginalContentString = utils.fromBase64Sring(data.content)
+            fileOriginalContentString = util.fromBase64Sring(data.content)
         }
     }
 
