@@ -1,9 +1,13 @@
 name: "mavenDockerHelm"
 description: "mavenDockerHelm"
 inputs:
-  directory:
-    description: "Location of helm"
-    required: true
+  mavenPomFile:
+    description: "Location of pom.xml file"
+    required: false
+  skipTests:
+    description: "Whether to skip tests during maven build"
+    required: false
+
 runs:
   using: "node12"
   main: "index.js"
