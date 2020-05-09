@@ -5,7 +5,7 @@ jest.mock("@actions/exec");
 describe('buildAndPush tests', () => {
     it('simple', async () => {
         const dockerOptions: docker.DockerOptions = {
-            dockerFile: "test/dockerfile",
+            dockerFileLocation: "test/dockerfile",
             dockerImage: "imagepath/image",
             registryHost: "registry.com",
             registryPassword: "pass",

@@ -17,14 +17,14 @@ async function mavenBuild() {
 }
 
 async function dockerBuild(tag: string) {
-    const dockerFile = core.getInput('dockerFile');
+    const dockerFileLocation = core.getInput('dockerFileLocation');
     const dockerImage = core.getInput('dockerImage');
     const registryHost = core.getInput('registryHost');
     const registryUsername = core.getInput('registryUsername');
     const registryPassword = core.getInput('registryPassword');
 
     const dockerOptions: docker.DockerOptions = {
-        dockerFile: dockerFile,
+        dockerFileLocation: dockerFileLocation,
         dockerImage: dockerImage,
         registryHost: registryHost,
         registryPassword: registryPassword,

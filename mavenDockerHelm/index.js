@@ -751,13 +751,13 @@ function mavenBuild() {
 }
 function dockerBuild(tag) {
     return __awaiter(this, void 0, void 0, function* () {
-        const dockerFile = core.getInput('dockerFile');
+        const dockerFileLocation = core.getInput('dockerFileLocation');
         const dockerImage = core.getInput('dockerImage');
         const registryHost = core.getInput('registryHost');
         const registryUsername = core.getInput('registryUsername');
         const registryPassword = core.getInput('registryPassword');
         const dockerOptions = {
-            dockerFile: dockerFile,
+            dockerFileLocation: dockerFileLocation,
             dockerImage: dockerImage,
             registryHost: registryHost,
             registryPassword: registryPassword,
@@ -1036,12 +1036,12 @@ function buildAndPush(options) {
         const tag = options.tag;
         const registryUsername = options.registryUsername;
         const registryPassword = options.registryPassword;
-        const dockerFile = options.dockerFile;
+        const dockerFileLocation = options.dockerFileLocation;
         const registry = `${registryHost}/${dockerImage}`;
         const tagBuild = `${registry}:${tag}`;
         const tagLatest = `${registry}:latest`;
         yield exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
-        yield exec.exec(`docker build --cache-from ${tagLatest} -t ${tagBuild} ${dockerFile}`);
+        yield exec.exec(`docker build --cache-from ${tagLatest} -t ${tagBuild} ${dockerFileLocation}`);
         yield exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
         yield exec.exec(`docker push ${tagBuild}`);
         yield exec.exec(`docker push ${tagLatest}`);
