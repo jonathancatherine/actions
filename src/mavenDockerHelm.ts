@@ -36,18 +36,25 @@ async function dockerBuild(tag: string) {
 
 async function run(): Promise<void> {
     try {
-        await mavenBuild();
-
-
-        await dockerBuild("sdfsdfs");
+        //await mavenBuild();
+        //await dockerBuild("sdfsdfs");
 
 
 
         //const githubToken = process.env.GITHUB_TOKEN || "";
         //const octokit = new github.GitHub(githubToken);
+        const commits = github.context.payload.commits;
+        const commitUrls = commits.map((commit) => commit.url).join('\n');
+        const headCommit = github.context.payload.headCommit;
 
-        // const payload = JSON.stringify(github.context.payload, undefined, 2)
-        // console.log(`The event payload: ${payload}`);
+        const commitsString = JSON.stringify(commits, undefined, 2)
+        console.log(`The event payload: ${commitsString}`);
+
+        const commitUrlsString = JSON.stringify(commitUrls, undefined, 2)
+        console.log(`The event payload: ${commitUrlsString}`);
+
+        const headCommitString = JSON.stringify(headCommit, undefined, 2)
+        console.log(`The event payload: ${headCommitString}`);
 
         // const env = JSON.stringify(process.env)
         // console.log(`env: ${env}`);
