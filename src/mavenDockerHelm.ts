@@ -44,17 +44,19 @@ async function run(): Promise<void> {
         //const githubToken = process.env.GITHUB_TOKEN || "";
         //const octokit = new github.GitHub(githubToken);
         const commits = github.context.payload.commits;
-        const commitUrls = commits.map((commit) => commit.url).join('\n');
-        const headCommit = github.context.payload.headCommit;
+        const commitUrls = commits.map((commit) => commit.url).join(',');
+        const headCommit = github.context.payload.head_commit;
 
-        const commitsString = JSON.stringify(commits, undefined, 2)
-        console.log(`The event payload: ${commitsString}`);
+        console.log(`The event payload: ${JSON.stringify(github.context.payload, undefined, 2)}`);
+        console.log(`compare: ${JSON.stringify(github.context.payload.compare, undefined, 2)}`);
 
-        const commitUrlsString = JSON.stringify(commitUrls, undefined, 2)
-        console.log(`The event payload: ${commitUrlsString}`);
+        //console.log(`The event payload: ${JSON.stringify(github.context.payload, undefined, 2)}`);
 
-        const headCommitString = JSON.stringify(headCommit, undefined, 2)
-        console.log(`The event payload: ${headCommitString}`);
+        console.log(`commits: ${JSON.stringify(commits, undefined, 2)}`);
+
+        console.log(`commitUrls: ${JSON.stringify(commitUrls, undefined, 2)}`);
+
+        console.log(`headCommit: ${JSON.stringify(headCommit, undefined, 2)}`);
 
         // const env = JSON.stringify(process.env)
         // console.log(`env: ${env}`);
