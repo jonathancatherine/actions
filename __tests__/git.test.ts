@@ -2,16 +2,17 @@ import * as git from "../src/utils/git";
 const exec = require('@actions/exec');
 const github = require('@actions/github');
 jest.mock("@actions/exec");
+jest.mock("@actions/github");
 
 describe('replaceRemoteFile tests', () => {
     it('simple', async () => {
         const remoteFileReplaceOptions: git.RemoteFileReplaceOptions = {
-            branch: "test",
-            octokit: new github.GitHub("e1d63372f3b08b0af7b38a94d98317c9bbb8ebdf"),
-            owner: "jonathancatherine",
-            repo: "actiontests",
-            path: "helmtest.yml",
-            modifier: (value) => (value + "sdf")
+            branch: "testBranch",
+            octokit: new github.GitHub("testToken"),
+            owner: "testOwner",
+            repo: "testRepo",
+            path: "testPath/testfile.txt",
+            modifier: (value) => (value + "appended")
         };
 
         //const execMock = jest.spyOn(exec, "exec");
@@ -25,4 +26,3 @@ describe('replaceRemoteFile tests', () => {
         // expect(execMock).toHaveBeenNthCalledWith(5, "docker push registry.com/imagepath/image:latest");
     })
 })
-

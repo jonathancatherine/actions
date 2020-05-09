@@ -31,9 +31,7 @@ export async function replaceRemoteFile(options: RemoteFileReplaceOptions): Prom
     }
 
     const yamlAsString = options.modifier(fileOriginalContentString);
-
-    var fileModifiedContentBuffer = Buffer.from(yamlAsString);
-    var newContentBase64 = fileModifiedContentBuffer.toString('base64');
+    const newContentBase64 = util.toBase64Sring(yamlAsString)
 
     const replaceFile = await octokit.repos.createOrUpdateFile({
         owner: owner,

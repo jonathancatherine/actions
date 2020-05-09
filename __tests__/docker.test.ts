@@ -24,4 +24,3 @@ describe('buildAndPush tests', () => {
         expect(execMock).toHaveBeenNthCalledWith(5, "docker push registry.com/imagepath/image:latest");
     })
 })
-
