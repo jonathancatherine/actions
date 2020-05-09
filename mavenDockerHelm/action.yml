@@ -1,5 +1,5 @@
-name: "Helm build"
-description: "Build helm project"
+name: "mavenDockerHelm"
+description: "mavenDockerHelm"
 inputs:
   directory:
     description: "Location of helm"

@@ -4,7 +4,7 @@
   "description": "Action",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && ncc build -o helm src/helm.ts",
+    "build": "tsc && ncc build -o mavenDockerHelm src/mavenDockerHelm.ts",
     "test": "tsc --noEmit && jest",
     "test-watch": "tsc --noEmit && jest --watch",
     "test-coverage": "tsc --noEmit && jest --coverage",

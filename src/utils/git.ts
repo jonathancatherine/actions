@@ -2,7 +2,7 @@ import * as github from "@actions/github";
 import * as util from "./util";
 import * as webhooks from '@octokit/webhooks'
 
-export interface RemoteFileReplaceOptions {
+export interface RemoteFileModificationOptions {
     octokit: github.GitHub;
     owner: string
     repo: string
@@ -10,14 +10,20 @@ export interface RemoteFileReplaceOptions {
 
     path: string;
     modifier: (string) => string;
+
+    message: string;
+    committer: { name: string, email: string }
 }
 
-export async function replaceRemoteFile(options: RemoteFileReplaceOptions): Promise<void> {
+export async function modifyGitFile(options: RemoteFileModificationOptions): Promise<void> {
     const octokit = options.octokit;
     const owner = options.owner;
     const path = options.path;
     const branch = options.branch;
     const repo = options.repo;
+    const modifier = options.modifier;
+    const message = options.message;
+    const committer = options.committer;
 
     const { data } = await octokit.repos.getContents({ owner: owner, path: path, ref: branch, repo: repo });
 
@@ -30,18 +36,17 @@ export async function replaceRemoteFile(options: RemoteFileReplaceOptions): Prom
         }
     }
 
-    const yamlAsString = options.modifier(fileOriginalContentString);
-    const newContentBase64 = util.toBase64Sring(yamlAsString)
+    const newContentBase64 = util.toBase64Sring(modifier(fileOriginalContentString))
 
     const replaceFile = await octokit.repos.createOrUpdateFile({
         owner: owner,
         repo: repo,
         path: path,
-        message: "message",
+        message: message,
         content: newContentBase64,
         branch: branch,
-        committer: { name: "Jonathan", email: "test@email.com" },
-        author: { name: "Jonathan", email: "test@email.com" },
+        committer: { name: committer.name, email: committer.email },
+        author: { name: committer.name, email: committer.email },
         sha: fileSha
     });
 }
