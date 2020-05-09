@@ -16465,17 +16465,13 @@ const github = __webpack_require__(955);
         console.log(`The event repo: ${repo}`);
         console.log(`The event branch: ${branch}`);
 
-        const reference = await octokit.git.getRef({ owner: owner, ref: branch, repo: repo });
+        const reference = await octokit.git.getRef({ owner: owner, ref: `head/${branch}`, repo: repo });
         const refstr = JSON.stringify(reference.data.object.sha);
         console.log(`Ref: ${refstr}`);
 
-        const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "test", repo: repo });
+        const file2 = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: branch, repo: repo });
         const fileSha = JSON.stringify(file2.data.sha);
         console.log(`File test: ${fileSha}`);
-
-        const fileMaster = await octokit.repos.getContents({ owner: owner, path: "file.txt", ref: "master", repo: repo });
-        const fileMasterSha = JSON.stringify(fileMaster.data.sha);
-        console.log(`File master: ${fileMasterSha}`);
 
         var b = Buffer.from(fileSha)
         var content = b.toString('base64');
