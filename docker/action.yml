@@ -1,9 +1,0 @@
-name: "Docker build"
-description: "Build Docker project"
-inputs:
-  directory:
-    description: "Location of Dockerfile"
-    required: true
-runs:
-  using: "node12"
-  main: "dist/index.js"

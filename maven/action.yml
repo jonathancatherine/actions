@@ -1,9 +1,0 @@
-name: "Maven build"
-description: "Build maven project"
-inputs:
-  directory:
-    description: "Location of pom.xml"
-    required: true
-runs:
-  using: "node12"
-  main: "dist/index.js"
