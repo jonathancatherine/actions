@@ -746,7 +746,7 @@ function mavenBuild() {
             goals: "clean package",
             skipTests: skipTests === 'true'
         };
-        maven.build(mavenParameters);
+        yield maven.build(mavenParameters);
     });
 }
 function dockerBuild(tag) {

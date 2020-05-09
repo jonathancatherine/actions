@@ -13,7 +13,7 @@ async function mavenBuild() {
         goals: "clean package",
         skipTests: skipTests === 'true'
     };
-    maven.build(mavenParameters);
+    await maven.build(mavenParameters);
 }
 
 async function dockerBuild(tag: string) {
