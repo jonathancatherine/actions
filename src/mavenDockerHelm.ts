@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 import * as maven from "../src/utils/maven";
 import * as docker from "../src/utils/docker";
+import * as util from "../src/utils/util";
 
 async function mavenBuild() {
     const mavenPomFile = core.getInput('mavenPomFile');
@@ -36,6 +37,7 @@ async function dockerBuild(tag: string) {
 
 async function run(): Promise<void> {
     try {
+        const githubPayload = github.context.payload;
         //await mavenBuild();
         //await dockerBuild("sdfsdfs");
 
@@ -43,23 +45,23 @@ async function run(): Promise<void> {
 
         //const githubToken = process.env.GITHUB_TOKEN || "";
         //const octokit = new github.GitHub(githubToken);
-        const commits = github.context.payload.commits;
-        const commitUrls = commits.map((commit) => commit.url).join(',');
-        const headCommit = github.context.payload.head_commit;
 
-        console.log(`The event payload: ${JSON.stringify(github.context.payload, undefined, 2)}`);
-        console.log(`compare: ${JSON.stringify(github.context.payload.compare, undefined, 2)}`);
+        const headCommit = githubPayload.head_commit;
 
-        //console.log(`The event payload: ${JSON.stringify(github.context.payload, undefined, 2)}`);
+        const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)));
+        const dockerTag = dockerTagDate + githubPayload.after.substring(0, 7);
 
-        console.log(`commits: ${JSON.stringify(commits, undefined, 2)}`);
+        const dockerOptions: util.GithubChangesCommentParameters = {
+            repository: githubPayload.repository?.full_name || "",
+            changesUrl: githubPayload.compare,
+            dockerTag: dockerTag,
+            dockerImageDigest: "testdigest"
+        };
 
-        console.log(`commitUrls: ${JSON.stringify(commitUrls, undefined, 2)}`);
+        const comment = util.getGithubChangesComment(dockerOptions);
 
-        console.log(`headCommit: ${JSON.stringify(headCommit, undefined, 2)}`);
 
-        // const env = JSON.stringify(process.env)
-        // console.log(`env: ${env}`);
+        console.log(`The event payload: ${comment}`);
     } catch (error) {
         core.setFailed(error.message);
     }
