@@ -1,4 +1,4 @@
-import * as git from "../src/git";
+import * as git from "../src/utils/git";
 const exec = require('@actions/exec');
 const github = require('@actions/github');
 jest.mock("@actions/exec");

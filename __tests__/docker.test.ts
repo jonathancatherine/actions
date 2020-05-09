@@ -1,4 +1,4 @@
-import * as docker from "../src/docker";
+import * as docker from "../src/utils/docker";
 import * as exec from "@actions/exec";
 jest.mock("@actions/exec");
 

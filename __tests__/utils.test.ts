@@ -1,4 +1,4 @@
-import * as utils from "../src/utils";
+import * as util from "../src/utils/util";
 
 describe('setValueInObject tests', () => {
     it('shallow', async () => {
@@ -6,7 +6,7 @@ describe('setValueInObject tests', () => {
             a: "Hello"
         };
 
-        const modifiedObject = utils.setValue(obj, 'a', 'test');
+        const modifiedObject = util.setValue(obj, 'a', 'test');
         expect(modifiedObject.a).toBe('test');
     })
 
@@ -15,7 +15,7 @@ describe('setValueInObject tests', () => {
             a: { b: "" }
         };
 
-        const modifiedObject = utils.setValue(obj, 'a.b', 'test');
+        const modifiedObject = util.setValue(obj, 'a.b', 'test');
         expect(modifiedObject.a.b).toBe('test');
     })
 })
@@ -23,14 +23,14 @@ describe('setValueInObject tests', () => {
 
 describe('fromBase64Sring tests', () => {
     it('simple', async () => {
-        const value = utils.fromBase64Sring("dGVzdHZhbHVl");
+        const value = util.fromBase64Sring("dGVzdHZhbHVl");
         expect(value).toBe('testvalue');
     })
 })
 
 describe('toBase64Sring tests', () => {
     it('simple', async () => {
-        const value = utils.toBase64Sring("testvalue");
+        const value = util.toBase64Sring("testvalue");
         expect(value).toBe('dGVzdHZhbHVl');
     })
 })
@@ -59,7 +59,7 @@ describe('replaceValueInYamlString tests', () => {
       tag: bbbb
 `;
 
-        const modifiedValue = utils.replaceValueInYamlString(value, "spec.values.image.tag", "bbbb");
+        const modifiedValue = util.replaceValueInYamlString(value, "spec.values.image.tag", "bbbb");
         expect(modifiedValue).toBe(expectedValue);
     })
 })
