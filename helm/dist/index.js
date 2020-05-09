@@ -21326,28 +21326,7 @@ exports.HttpClient = HttpClient;
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setValueInObject", function() { return setValueInObject; });
-const yaml = __webpack_require__(895)
-const fs = __webpack_require__(747)
-
-const file = fs.readFileSync('./file.yml', 'utf8');
-const parsed = yaml.parse(file);
-
-
-const setPath = (object, path, value) => path
-    .split('.')
-    .reduce((o, p, i) => o[p] = path.split('.').length === ++i ? value : o[p] || {}, object)
-
 const setValueInObject = (object, path, value) => eval(`object.${path} = "${value}"`);
-
-
-
-console.log(parsed);
-
-//console.log(parsed.spec.values.image.tag);
-
-const str = yaml.stringify(parsed);
-console.log(str);
-
 
 /***/ }),
 
