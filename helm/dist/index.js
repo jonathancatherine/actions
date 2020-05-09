@@ -36,6 +36,8 @@ module.exports =
 /******/ 		// Load entry module and return exports
 /******/ 		return __webpack_require__(184);
 /******/ 	};
+/******/ 	// initialize runtime
+/******/ 	runtime(__webpack_require__);
 /******/
 /******/ 	// run startup
 /******/ 	return startup();
@@ -17456,12 +17458,17 @@ module.exports = /^#!.*/;
 /***/ }),
 
 /***/ 184:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _yamltest__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(371);
 const core = __webpack_require__(357);
 const exec = __webpack_require__(425);
 const github = __webpack_require__(955);
 const yaml = __webpack_require__(895);
+
+
 
 (async () => {
     try {
@@ -17487,7 +17494,9 @@ const yaml = __webpack_require__(895);
         const fileOriginalContentString = fileOriginalContentBuffer.toString('utf8');
 
         const parsedYaml = yaml.parse(fileOriginalContentString);
-        parsedYaml.spec.values.image.tag = fileSha;
+
+        Object(_yamltest__WEBPACK_IMPORTED_MODULE_0__.setValueInObject)(parsedYaml, "spec.values.image.tag", fileSha)
+
         const yamlAsString = yaml.stringify(parsedYaml);
 
         var fileModifiedContentBuffer = Buffer.from(yamlAsString);
@@ -21308,6 +21317,36 @@ class HttpClient {
     }
 }
 exports.HttpClient = HttpClient;
+
+
+/***/ }),
+
+/***/ 371:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setValueInObject", function() { return setValueInObject; });
+const yaml = __webpack_require__(895)
+const fs = __webpack_require__(747)
+
+const file = fs.readFileSync('./file.yml', 'utf8');
+const parsed = yaml.parse(file);
+
+
+const setPath = (object, path, value) => path
+    .split('.')
+    .reduce((o, p, i) => o[p] = path.split('.').length === ++i ? value : o[p] || {}, object)
+
+const setValueInObject = (object, path, value) => eval(`object.${path} = "${value}"`);
+
+
+
+console.log(parsed);
+
+//console.log(parsed.spec.values.image.tag);
+
+const str = yaml.stringify(parsed);
+console.log(str);
 
 
 /***/ }),
@@ -34004,4 +34043,31 @@ module.exports = function btoa(str) {
 
 /***/ })
 
-/******/ });
+/******/ },
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ 	"use strict";
+/******/ 
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ }
+);

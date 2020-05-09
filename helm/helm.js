@@ -2,6 +2,8 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const github = require('@actions/github');
 const yaml = require('yaml');
+import { setValueInObject } from './yamltest';
+
 
 (async () => {
     try {
@@ -27,7 +29,9 @@ const yaml = require('yaml');
         const fileOriginalContentString = fileOriginalContentBuffer.toString('utf8');
 
         const parsedYaml = yaml.parse(fileOriginalContentString);
-        parsedYaml.spec.values.image.tag = fileSha;
+
+        setValueInObject(parsedYaml, "spec.values.image.tag", fileSha)
+
         const yamlAsString = yaml.stringify(parsedYaml);
 
         var fileModifiedContentBuffer = Buffer.from(yamlAsString);
