@@ -88,6 +88,22 @@ DockerImageDigest: test/jc/registry/test@sha256:bca53a1fc8ae8804e479af3766ed516c
     })
 })
 
+describe('getGithubChangesComment tests', () => {
+    it('without digest', async () => {
+        const dockerOptions: util.GithubChangesCommentParameters = {
+            repository: 'jonathancatherine/actiontests',
+            changesUrl: "https://github.com/jonathancatherine/actiontests/compare/74321d842afd...71a22468b3bc",
+            dockerTag: "dockerTagTest"
+        };
+
+        const comment = util.getGithubChangesComment(dockerOptions);
+
+        expect(comment).toBe(`Repository: jonathancatherine/actiontests
+Change: https://github.com/jonathancatherine/actiontests/compare/74321d842afd...71a22468b3bc
+DockerTag: dockerTagTest`);
+    })
+})
+
 describe('getDateString tests', () => {
     it('simple', async () => {
         const date = new Date("2020-03-25T12:04:17Z");

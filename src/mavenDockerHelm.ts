@@ -38,31 +38,28 @@ async function dockerBuild(tag: string): Promise<string> {
 async function run(): Promise<void> {
     try {
         const githubPayload = github.context.payload;
+        const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+        const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
+        const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
+
         await mavenBuild();
-        const digest = await dockerBuild("sdfsdfs");
-
-
+        await dockerBuild(dockerTag);
 
         //const githubToken = process.env.GITHUB_TOKEN || "";
         //const octokit = new github.GitHub(githubToken);
 
         const headCommit = githubPayload.head_commit;
 
-        const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-        const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
-        const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
 
         const githubChangesCommentParameters: util.GithubChangesCommentParameters = {
             repository: githubPayload.repository?.full_name || "",
             changesUrl: githubPayload.compare,
-            dockerTag: dockerTag,
-            dockerImageDigest: digest
+            dockerTag: dockerTag
         };
 
         const comment = util.getGithubChangesComment(githubChangesCommentParameters);
 
-
-        console.log(`The event payload: ${comment}`);
+        console.log(`${comment}`);
     } catch (error) {
         core.setFailed(error.message);
     }

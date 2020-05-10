@@ -9668,22 +9668,21 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const githubPayload = github.context.payload;
-            yield mavenBuild();
-            const digest = yield dockerBuild("sdfsdfs");
-            //const githubToken = process.env.GITHUB_TOKEN || "";
-            //const octokit = new github.GitHub(githubToken);
-            const headCommit = githubPayload.head_commit;
             const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
             const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
             const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
+            yield mavenBuild();
+            yield dockerBuild(dockerTag);
+            //const githubToken = process.env.GITHUB_TOKEN || "";
+            //const octokit = new github.GitHub(githubToken);
+            const headCommit = githubPayload.head_commit;
             const githubChangesCommentParameters = {
                 repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
                 changesUrl: githubPayload.compare,
-                dockerTag: dockerTag,
-                dockerImageDigest: digest
+                dockerTag: dockerTag
             };
             const comment = util.getGithubChangesComment(githubChangesCommentParameters);
-            console.log(`The event payload: ${comment}`);
+            console.log(`${comment}`);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -14992,7 +14991,7 @@ function buildAndPush(options) {
                 }
             }
         };
-        yield exec.exec(`docker inspect --format='{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
+        //await exec.exec(`docker inspect --format='{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
         return output;
     });
 }
@@ -31500,8 +31499,7 @@ exports.replaceValueInYamlString = replaceValueInYamlString;
 function getGithubChangesComment(params) {
     return `Repository: ${params.repository}
 Change: ${params.changesUrl}
-DockerTag: ${params.dockerTag}
-DockerImageDigest: ${params.dockerImageDigest}`;
+DockerTag: ${params.dockerTag}${params.dockerImageDigest ? '\nDockerImageDigest: ' + params.dockerImageDigest : ''}`;
 }
 exports.getGithubChangesComment = getGithubChangesComment;
 function getDateString(date) {

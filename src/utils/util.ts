@@ -25,7 +25,7 @@ export function replaceValueInYamlString(input: string, path: string, replaceVal
 export interface GithubChangesCommentParameters {
     repository: string;
     changesUrl: string;
-    dockerImageDigest: string;
+    dockerImageDigest?: string;
     dockerTag: string
 }
 
@@ -33,8 +33,7 @@ export interface GithubChangesCommentParameters {
 export function getGithubChangesComment(params: GithubChangesCommentParameters): any {
     return `Repository: ${params.repository}
 Change: ${params.changesUrl}
-DockerTag: ${params.dockerTag}
-DockerImageDigest: ${params.dockerImageDigest}`;
+DockerTag: ${params.dockerTag}${params.dockerImageDigest ? '\nDockerImageDigest: ' + params.dockerImageDigest : ''}`;
 }
 
 

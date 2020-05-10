@@ -36,6 +36,6 @@ export async function buildAndPush(options: DockerOptions): Promise<string> {
         }
     };
 
-    await exec.exec(`docker inspect --format='{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
+    //await exec.exec(`docker inspect --format='{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
     return output;
 }
