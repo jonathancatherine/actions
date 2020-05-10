@@ -3,10 +3,11 @@ import * as github from "@actions/github";
 import * as maven from "../src/utils/maven";
 import * as docker from "../src/utils/docker";
 import * as util from "../src/utils/util";
+import * as git from "../src/utils/git";
 
 async function mavenBuild() {
     const mavenPomFile = core.getInput('mavenPomFile');
-    const skipTests = core.getInput('skipTests');
+    const skipTests = core.getInput('mavenSkipTests');
 
     const mavenParameters: maven.MavenParameters = {
         options: "-B",
@@ -20,16 +21,16 @@ async function mavenBuild() {
 async function dockerBuild(tag: string): Promise<string> {
     const dockerFileLocation = core.getInput('dockerFileLocation');
     const dockerImage = core.getInput('dockerImage');
-    const registryHost = core.getInput('registryHost');
-    const registryUsername = core.getInput('registryUsername');
-    const registryPassword = core.getInput('registryPassword');
+    const dockerRegistryHost = core.getInput('dockerRegistryHost');
+    const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
+    const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
 
     const dockerOptions: docker.DockerOptions = {
         dockerFileLocation: dockerFileLocation,
         dockerImage: dockerImage,
-        registryHost: registryHost,
-        registryPassword: registryPassword,
-        registryUsername: registryUsername,
+        registryHost: dockerRegistryHost,
+        registryPassword: dockerRegistryPassword,
+        registryUsername: dockerRegistryUsername,
         tag: tag
     };
     return await docker.buildAndPush(dockerOptions);
@@ -42,14 +43,8 @@ async function run(): Promise<void> {
         const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
         const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
 
-        await mavenBuild();
-        await dockerBuild(dockerTag);
-
-        //const githubToken = process.env.GITHUB_TOKEN || "";
-        //const octokit = new github.GitHub(githubToken);
-
-        const headCommit = githubPayload.head_commit;
-
+        //await mavenBuild();
+        //await dockerBuild(dockerTag);
 
         const githubChangesCommentParameters: util.GithubChangesCommentParameters = {
             repository: githubPayload.repository?.full_name || "",
@@ -59,7 +54,30 @@ async function run(): Promise<void> {
 
         const comment = util.getGithubChangesComment(githubChangesCommentParameters);
 
-        console.log(`${comment}`);
+        const gitOpsOwner = core.getInput('gitOpsOwner');
+        const gitOpsRepo = core.getInput('gitOpsRepo');
+        const gitOpsBranch = core.getInput('gitOpsBranch');
+        const gitOpsFilePath = core.getInput('gitOpsFilePath');
+
+        const githubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
+        const octokit = new github.GitHub(githubToken);
+
+
+
+        const remoteFileModificationOptions: git.RemoteFileModificationOptions = {
+            branch: gitOpsBranch,
+            octokit: octokit,
+            owner: gitOpsOwner,
+            repo: gitOpsRepo,
+            path: gitOpsFilePath,
+
+            modifier: value => util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag),
+            message: comment,
+            committer: githubPayload.pusher
+        };
+
+        await git.modifyGitFile(remoteFileModificationOptions);
+
     } catch (error) {
         core.setFailed(error.message);
     }

@@ -9632,10 +9632,11 @@ const github = __importStar(__webpack_require__(469));
 const maven = __importStar(__webpack_require__(949));
 const docker = __importStar(__webpack_require__(772));
 const util = __importStar(__webpack_require__(887));
+const git = __importStar(__webpack_require__(776));
 function mavenBuild() {
     return __awaiter(this, void 0, void 0, function* () {
         const mavenPomFile = core.getInput('mavenPomFile');
-        const skipTests = core.getInput('skipTests');
+        const skipTests = core.getInput('mavenSkipTests');
         const mavenParameters = {
             options: "-B",
             mavenPomFile: mavenPomFile,
@@ -9649,15 +9650,15 @@ function dockerBuild(tag) {
     return __awaiter(this, void 0, void 0, function* () {
         const dockerFileLocation = core.getInput('dockerFileLocation');
         const dockerImage = core.getInput('dockerImage');
-        const registryHost = core.getInput('registryHost');
-        const registryUsername = core.getInput('registryUsername');
-        const registryPassword = core.getInput('registryPassword');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
+        const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
         const dockerOptions = {
             dockerFileLocation: dockerFileLocation,
             dockerImage: dockerImage,
-            registryHost: registryHost,
-            registryPassword: registryPassword,
-            registryUsername: registryUsername,
+            registryHost: dockerRegistryHost,
+            registryPassword: dockerRegistryPassword,
+            registryUsername: dockerRegistryUsername,
             tag: tag
         };
         return yield docker.buildAndPush(dockerOptions);
@@ -9671,18 +9672,31 @@ function run() {
             const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
             const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
             const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
-            yield mavenBuild();
-            yield dockerBuild(dockerTag);
-            //const githubToken = process.env.GITHUB_TOKEN || "";
-            //const octokit = new github.GitHub(githubToken);
-            const headCommit = githubPayload.head_commit;
+            //await mavenBuild();
+            //await dockerBuild(dockerTag);
             const githubChangesCommentParameters = {
                 repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
                 changesUrl: githubPayload.compare,
                 dockerTag: dockerTag
             };
             const comment = util.getGithubChangesComment(githubChangesCommentParameters);
-            console.log(`${comment}`);
+            const gitOpsOwner = core.getInput('gitOpsOwner');
+            const gitOpsRepo = core.getInput('gitOpsRepo');
+            const gitOpsBranch = core.getInput('gitOpsBranch');
+            const gitOpsFilePath = core.getInput('gitOpsFilePath');
+            const githubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
+            const octokit = new github.GitHub(githubToken);
+            const remoteFileModificationOptions = {
+                branch: gitOpsBranch,
+                octokit: octokit,
+                owner: gitOpsOwner,
+                repo: gitOpsRepo,
+                path: gitOpsFilePath,
+                modifier: value => util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag),
+                message: comment,
+                committer: githubPayload.pusher
+            };
+            yield git.modifyGitFile(remoteFileModificationOptions);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -15125,6 +15139,67 @@ exports.floatObj = floatObj;
 const core = _failsafe.failsafe.concat([nullObj, boolObj, octObj, intObj, hexObj, nanObj, expObj, floatObj]);
 
 exports.core = core;
+
+/***/ }),
+
+/***/ 776:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const util = __importStar(__webpack_require__(887));
+function modifyGitFile(options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const octokit = options.octokit;
+        const owner = options.owner;
+        const path = options.path;
+        const branch = options.branch;
+        const repo = options.repo;
+        const modifier = options.modifier;
+        const message = options.message;
+        const committer = options.committer;
+        const { data } = yield octokit.repos.getContents({ owner: owner, path: path, ref: branch, repo: repo });
+        let fileSha;
+        let fileOriginalContentString;
+        if (!Array.isArray(data)) {
+            fileSha = data.sha;
+            if (data.content) {
+                fileOriginalContentString = util.fromBase64Sring(data.content);
+            }
+        }
+        const newContentBase64 = util.toBase64Sring(modifier(fileOriginalContentString));
+        const replaceFile = yield octokit.repos.createOrUpdateFile({
+            owner: owner,
+            repo: repo,
+            path: path,
+            message: message,
+            content: newContentBase64,
+            branch: branch,
+            committer: { name: committer.name, email: committer.email },
+            author: { name: committer.name, email: committer.email },
+            sha: fileSha
+        });
+    });
+}
+exports.modifyGitFile = modifyGitFile;
+
 
 /***/ }),
 
