@@ -25,6 +25,7 @@ async function dockerBuild(tag: string): Promise<string> {
     const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
     const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
     const dockerBuildx = core.getInput('dockerBuildx');
+    const dockerPushLatest = core.getInput('dockerPushLatest');
 
     const dockerOptions: docker.DockerOptions = {
         dockerFileLocation: dockerFileLocation,
@@ -33,7 +34,8 @@ async function dockerBuild(tag: string): Promise<string> {
         registryPassword: dockerRegistryPassword,
         registryUsername: dockerRegistryUsername,
         tag: tag,
-        buildx: dockerBuildx === 'true'
+        buildx: dockerBuildx === 'true',
+        pushLatest: dockerPushLatest !== 'false',
     };
     return await docker.buildAndPush(dockerOptions);
 }

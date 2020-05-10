@@ -9654,6 +9654,7 @@ function dockerBuild(tag) {
         const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
         const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
         const dockerBuildx = core.getInput('dockerBuildx');
+        const dockerPushLatest = core.getInput('dockerPushLatest');
         const dockerOptions = {
             dockerFileLocation: dockerFileLocation,
             dockerImage: dockerImage,
@@ -9661,7 +9662,8 @@ function dockerBuild(tag) {
             registryPassword: dockerRegistryPassword,
             registryUsername: dockerRegistryUsername,
             tag: tag,
-            buildx: dockerBuildx === 'true'
+            buildx: dockerBuildx === 'true',
+            pushLatest: dockerPushLatest !== 'false',
         };
         return yield docker.buildAndPush(dockerOptions);
     });
@@ -15004,14 +15006,18 @@ function buildAndPush(options) {
         const registryPassword = options.registryPassword;
         const dockerFileLocation = options.dockerFileLocation;
         const buildx = options.buildx ? ' buildx' : '';
+        const pushLatest = options.pushLatest;
         const registry = `${registryHost}/${dockerImage}`;
         const tagBuild = `${registry}:${tag}`;
         const tagLatest = `${registry}:latest`;
+        const cacheFrom = options.pushLatest ? ` --cache-from ${tagLatest}` : '';
         yield exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
-        yield exec.exec(`docker${buildx} build --cache-from ${tagLatest} -t ${tagBuild} ${dockerFileLocation}`);
+        yield exec.exec(`docker${buildx} build${cacheFrom} -t ${tagBuild} ${dockerFileLocation}`);
         yield exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
         yield exec.exec(`docker push ${tagBuild}`);
-        yield exec.exec(`docker push ${tagLatest}`);
+        if (pushLatest) {
+            yield exec.exec(`docker push ${tagLatest}`);
+        }
         let output = '';
         const opts = {
             listeners: {

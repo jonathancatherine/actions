@@ -7,6 +7,7 @@ export interface DockerOptions {
     dockerImage: string;
     tag: string;
     buildx?: boolean;
+    pushLatest: boolean;
 }
 
 export async function buildAndPush(options: DockerOptions): Promise<string> {
@@ -16,17 +17,24 @@ export async function buildAndPush(options: DockerOptions): Promise<string> {
     const registryUsername = options.registryUsername;
     const registryPassword = options.registryPassword;
     const dockerFileLocation = options.dockerFileLocation;
-    const buildx = options.buildx ? ' buildx' : ''
+    const buildx = options.buildx ? ' buildx' : '';
+    const pushLatest = options.pushLatest;
 
     const registry = `${registryHost}/${dockerImage}`;
     const tagBuild = `${registry}:${tag}`;
     const tagLatest = `${registry}:latest`;
+    const cacheFrom = options.pushLatest ? ` --cache-from ${tagLatest}` : '';
 
     await exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
-    await exec.exec(`docker${buildx} build --cache-from ${tagLatest} -t ${tagBuild} ${dockerFileLocation}`);
+    await exec.exec(`docker${buildx} build${cacheFrom} -t ${tagBuild} ${dockerFileLocation}`);
     await exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
     await exec.exec(`docker push ${tagBuild}`);
-    await exec.exec(`docker push ${tagLatest}`);
+
+    if (pushLatest) {
+        await exec.exec(`docker push ${tagLatest}`);
+    }
+
+
 
     let output = '';
 
