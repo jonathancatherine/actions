@@ -9689,14 +9689,14 @@ function gitOps(githubPayload, dockerTag) {
         const comment = util.getGithubChangesComment(githubChangesCommentParameters);
         let modifierFunction;
         if (gitOpsType === 'HelmRelease') {
-            modifierFunction = (string) => string = value => {
+            modifierFunction = value => {
                 const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
                 const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
                 return finalValue;
             };
         }
         if (gitOpsType === 'Application') {
-            modifierFunction = (string) => string = value => {
+            modifierFunction = value => {
                 const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
                 const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
                 return finalValue;

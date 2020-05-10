@@ -63,7 +63,7 @@ async function gitOps(githubPayload: any, dockerTag: string): Promise<void> {
     let modifierFunction;
 
     if (gitOpsType === 'HelmRelease') {
-        modifierFunction = (string: any) => string = value => {
+        modifierFunction = value => {
             const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
             const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
             return finalValue;
@@ -72,7 +72,7 @@ async function gitOps(githubPayload: any, dockerTag: string): Promise<void> {
 
 
     if (gitOpsType === 'Application') {
-        modifierFunction = (string: any) => string = value => {
+        modifierFunction = value => {
             const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
             const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
             return finalValue;
