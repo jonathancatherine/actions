@@ -14992,7 +14992,7 @@ function buildAndPush(options) {
                 }
             }
         };
-        yield exec.exec(`docker inspect--format = '{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
+        yield exec.exec(`docker inspect --format='{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
         return output;
     });
 }
