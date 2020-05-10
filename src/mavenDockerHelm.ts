@@ -36,6 +36,43 @@ async function dockerBuild(tag: string): Promise<string> {
     return await docker.buildAndPush(dockerOptions);
 }
 
+
+async function gitOps(githubPayload: any, dockerTag: string): Promise<void> {
+    const gitOpsOwner = core.getInput('gitOpsOwner');
+    const gitOpsRepo = core.getInput('gitOpsRepo');
+    const gitOpsBranch = core.getInput('gitOpsBranch');
+    const gitOpsFilePath = core.getInput('gitOpsFilePath');
+    const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
+    const octokit = new github.GitHub(gitHubToken);
+    const dockerImage = core.getInput('dockerImage');
+    const dockerRegistryHost = core.getInput('dockerRegistryHost');
+    const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
+
+    const githubChangesCommentParameters: util.GithubChangesCommentParameters = {
+        repository: githubPayload.repository?.full_name || "",
+        changesUrl: githubPayload.compare,
+        dockerTag: dockerTag
+    };
+
+    const comment = util.getGithubChangesComment(githubChangesCommentParameters);
+    const remoteFileModificationOptions: git.RemoteFileModificationOptions = {
+        branch: gitOpsBranch,
+        octokit: octokit,
+        owner: gitOpsOwner,
+        repo: gitOpsRepo,
+        path: gitOpsFilePath,
+        modifier: value => {
+            const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
+            const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
+            return finalValue
+        },
+        message: comment,
+        committer: githubPayload.pusher
+    };
+
+    await git.modifyGitFile(remoteFileModificationOptions);
+}
+
 async function run(): Promise<void> {
     try {
         const githubPayload = github.context.payload;
@@ -45,45 +82,7 @@ async function run(): Promise<void> {
 
         //await mavenBuild();
         //await dockerBuild(dockerTag);
-
-        const githubChangesCommentParameters: util.GithubChangesCommentParameters = {
-            repository: githubPayload.repository?.full_name || "",
-            changesUrl: githubPayload.compare,
-            dockerTag: dockerTag
-        };
-
-        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
-
-        const gitOpsOwner = core.getInput('gitOpsOwner');
-        const gitOpsRepo = core.getInput('gitOpsRepo');
-        const gitOpsBranch = core.getInput('gitOpsBranch');
-        const gitOpsFilePath = core.getInput('gitOpsFilePath');
-
-        const githubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
-        const octokit = new github.GitHub(githubToken);
-
-        const dockerImage = core.getInput('dockerImage');
-        const dockerRegistryHost = core.getInput('dockerRegistryHost');
-
-        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
-
-        const remoteFileModificationOptions: git.RemoteFileModificationOptions = {
-            branch: gitOpsBranch,
-            octokit: octokit,
-            owner: gitOpsOwner,
-            repo: gitOpsRepo,
-            path: gitOpsFilePath,
-            modifier: value => {
-                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
-                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
-                return finalValue
-            },
-            message: comment,
-            committer: githubPayload.pusher
-        };
-
-        await git.modifyGitFile(remoteFileModificationOptions);
-
+        await gitOps(githubPayload, dockerTag);
     } catch (error) {
         core.setFailed(error.message);
     }

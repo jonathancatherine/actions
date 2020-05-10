@@ -9664,8 +9664,42 @@ function dockerBuild(tag) {
         return yield docker.buildAndPush(dockerOptions);
     });
 }
-function run() {
+function gitOps(githubPayload, dockerTag) {
     var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const gitOpsOwner = core.getInput('gitOpsOwner');
+        const gitOpsRepo = core.getInput('gitOpsRepo');
+        const gitOpsBranch = core.getInput('gitOpsBranch');
+        const gitOpsFilePath = core.getInput('gitOpsFilePath');
+        const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
+        const octokit = new github.GitHub(gitHubToken);
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
+        const githubChangesCommentParameters = {
+            repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
+            changesUrl: githubPayload.compare,
+            dockerTag: dockerTag
+        };
+        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
+        const remoteFileModificationOptions = {
+            branch: gitOpsBranch,
+            octokit: octokit,
+            owner: gitOpsOwner,
+            repo: gitOpsRepo,
+            path: gitOpsFilePath,
+            modifier: value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
+                return finalValue;
+            },
+            message: comment,
+            committer: githubPayload.pusher
+        };
+        yield git.modifyGitFile(remoteFileModificationOptions);
+    });
+}
+function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const githubPayload = github.context.payload;
@@ -9674,36 +9708,7 @@ function run() {
             const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
             //await mavenBuild();
             //await dockerBuild(dockerTag);
-            const githubChangesCommentParameters = {
-                repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
-                changesUrl: githubPayload.compare,
-                dockerTag: dockerTag
-            };
-            const comment = util.getGithubChangesComment(githubChangesCommentParameters);
-            const gitOpsOwner = core.getInput('gitOpsOwner');
-            const gitOpsRepo = core.getInput('gitOpsRepo');
-            const gitOpsBranch = core.getInput('gitOpsBranch');
-            const gitOpsFilePath = core.getInput('gitOpsFilePath');
-            const githubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
-            const octokit = new github.GitHub(githubToken);
-            const dockerImage = core.getInput('dockerImage');
-            const dockerRegistryHost = core.getInput('dockerRegistryHost');
-            const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
-            const remoteFileModificationOptions = {
-                branch: gitOpsBranch,
-                octokit: octokit,
-                owner: gitOpsOwner,
-                repo: gitOpsRepo,
-                path: gitOpsFilePath,
-                modifier: value => {
-                    const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
-                    const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
-                    return finalValue;
-                },
-                message: comment,
-                committer: githubPayload.pusher
-            };
-            yield git.modifyGitFile(remoteFileModificationOptions);
+            yield gitOps(githubPayload, dockerTag);
         }
         catch (error) {
             core.setFailed(error.message);
