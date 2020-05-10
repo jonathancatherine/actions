@@ -80,8 +80,8 @@ async function run(): Promise<void> {
         const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
         const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
 
-        //await mavenBuild();
-        //await dockerBuild(dockerTag);
+        await mavenBuild();
+        await dockerBuild(dockerTag);
         await gitOps(githubPayload, dockerTag);
     } catch (error) {
         core.setFailed(error.message);

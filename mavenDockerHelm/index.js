@@ -9706,8 +9706,8 @@ function run() {
             const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
             const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
             const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
-            //await mavenBuild();
-            //await dockerBuild(dockerTag);
+            yield mavenBuild();
+            yield dockerBuild(dockerTag);
             yield gitOps(githubPayload, dockerTag);
         }
         catch (error) {
