@@ -62,7 +62,10 @@ async function run(): Promise<void> {
         const githubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
         const octokit = new github.GitHub(githubToken);
 
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
 
+        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
 
         const remoteFileModificationOptions: git.RemoteFileModificationOptions = {
             branch: gitOpsBranch,
@@ -70,8 +73,11 @@ async function run(): Promise<void> {
             owner: gitOpsOwner,
             repo: gitOpsRepo,
             path: gitOpsFilePath,
-
-            modifier: value => util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag),
+            modifier: value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
+                return finalValue
+            },
             message: comment,
             committer: githubPayload.pusher
         };
