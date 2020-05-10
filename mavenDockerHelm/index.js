@@ -9653,13 +9653,15 @@ function dockerBuild(tag) {
         const dockerRegistryHost = core.getInput('dockerRegistryHost');
         const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
         const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
+        const dockerBuildx = core.getInput('dockerBuildx');
         const dockerOptions = {
             dockerFileLocation: dockerFileLocation,
             dockerImage: dockerImage,
             registryHost: dockerRegistryHost,
             registryPassword: dockerRegistryPassword,
             registryUsername: dockerRegistryUsername,
-            tag: tag
+            tag: tag,
+            buildx: dockerBuildx === 'true'
         };
         return yield docker.buildAndPush(dockerOptions);
     });
@@ -15001,11 +15003,12 @@ function buildAndPush(options) {
         const registryUsername = options.registryUsername;
         const registryPassword = options.registryPassword;
         const dockerFileLocation = options.dockerFileLocation;
+        const buildx = options.buildx ? ' buildx' : '';
         const registry = `${registryHost}/${dockerImage}`;
         const tagBuild = `${registry}:${tag}`;
         const tagLatest = `${registry}:latest`;
         yield exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
-        yield exec.exec(`docker build --cache-from ${tagLatest} -t ${tagBuild} ${dockerFileLocation}`);
+        yield exec.exec(`docker${buildx} build --cache-from ${tagLatest} -t ${tagBuild} ${dockerFileLocation}`);
         yield exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
         yield exec.exec(`docker push ${tagBuild}`);
         yield exec.exec(`docker push ${tagLatest}`);
