@@ -42,10 +42,11 @@ async function dockerBuild(tag: string): Promise<string> {
 
 
 async function gitOps(githubPayload: any, dockerTag: string): Promise<void> {
-    const gitOpsOwner = core.getInput('gitOpsOwner');
-    const gitOpsRepo = core.getInput('gitOpsRepo');
-    const gitOpsBranch = core.getInput('gitOpsBranch');
-    const gitOpsFilePath = core.getInput('gitOpsFilePath');
+    const gitOpsType = core.getInput('gitOpsType', { required: true });
+    const gitOpsOwner = core.getInput('gitOpsOwner', { required: true });
+    const gitOpsRepo = core.getInput('gitOpsRepo', { required: true });
+    const gitOpsBranch = core.getInput('gitOpsBranch', { required: true });
+    const gitOpsFilePath = core.getInput('gitOpsFilePath', { required: true });
     const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
     const octokit = new github.GitHub(gitHubToken);
     const dockerImage = core.getInput('dockerImage');
@@ -59,17 +60,32 @@ async function gitOps(githubPayload: any, dockerTag: string): Promise<void> {
     };
 
     const comment = util.getGithubChangesComment(githubChangesCommentParameters);
+    let modifierFunction;
+
+    if (gitOpsType === 'HelmRelease') {
+        modifierFunction = (string: any) => string = value => {
+            const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
+            const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
+            return finalValue;
+        };
+    }
+
+
+    if (gitOpsType === 'Application') {
+        modifierFunction = (string: any) => string = value => {
+            const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
+            const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
+            return finalValue;
+        };
+    }
+
     const remoteFileModificationOptions: git.RemoteFileModificationOptions = {
         branch: gitOpsBranch,
         octokit: octokit,
         owner: gitOpsOwner,
         repo: gitOpsRepo,
         path: gitOpsFilePath,
-        modifier: value => {
-            const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
-            const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
-            return finalValue
-        },
+        modifier: modifierFunction,
         message: comment,
         committer: githubPayload.pusher
     };
