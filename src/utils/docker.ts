@@ -8,7 +8,7 @@ export interface DockerOptions {
     tag: string;
 }
 
-export async function buildAndPush(options: DockerOptions): Promise<void> {
+export async function buildAndPush(options: DockerOptions): Promise<string> {
     const registryHost = options.registryHost;
     const dockerImage = options.dockerImage;
     const tag = options.tag;
@@ -25,4 +25,17 @@ export async function buildAndPush(options: DockerOptions): Promise<void> {
     await exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
     await exec.exec(`docker push ${tagBuild}`);
     await exec.exec(`docker push ${tagLatest}`);
+
+    let output = '';
+
+    const opts = {
+        listeners: {
+            stdout: (data: Buffer) => {
+                output += data.toString();
+            }
+        }
+    };
+
+    await exec.exec(`docker inspect--format = '{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
+    return output;
 }

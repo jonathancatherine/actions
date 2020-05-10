@@ -17,7 +17,7 @@ async function mavenBuild() {
     await maven.build(mavenParameters);
 }
 
-async function dockerBuild(tag: string) {
+async function dockerBuild(tag: string): Promise<string> {
     const dockerFileLocation = core.getInput('dockerFileLocation');
     const dockerImage = core.getInput('dockerImage');
     const registryHost = core.getInput('registryHost');
@@ -32,14 +32,14 @@ async function dockerBuild(tag: string) {
         registryUsername: registryUsername,
         tag: tag
     };
-    await docker.buildAndPush(dockerOptions);
+    return await docker.buildAndPush(dockerOptions);
 }
 
 async function run(): Promise<void> {
     try {
         const githubPayload = github.context.payload;
-        //await mavenBuild();
-        //await dockerBuild("sdfsdfs");
+        await mavenBuild();
+        const digest = await dockerBuild("sdfsdfs");
 
 
 
@@ -48,17 +48,18 @@ async function run(): Promise<void> {
 
         const headCommit = githubPayload.head_commit;
 
-        const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)));
-        const dockerTag = dockerTagDate + githubPayload.after.substring(0, 7);
+        const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+        const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
+        const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
 
-        const dockerOptions: util.GithubChangesCommentParameters = {
+        const githubChangesCommentParameters: util.GithubChangesCommentParameters = {
             repository: githubPayload.repository?.full_name || "",
             changesUrl: githubPayload.compare,
             dockerTag: dockerTag,
-            dockerImageDigest: "testdigest"
+            dockerImageDigest: digest
         };
 
-        const comment = util.getGithubChangesComment(dockerOptions);
+        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
 
 
         console.log(`The event payload: ${comment}`);

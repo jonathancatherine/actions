@@ -9660,7 +9660,7 @@ function dockerBuild(tag) {
             registryUsername: registryUsername,
             tag: tag
         };
-        yield docker.buildAndPush(dockerOptions);
+        return yield docker.buildAndPush(dockerOptions);
     });
 }
 function run() {
@@ -9668,20 +9668,21 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const githubPayload = github.context.payload;
-            //await mavenBuild();
-            //await dockerBuild("sdfsdfs");
+            yield mavenBuild();
+            const digest = yield dockerBuild("sdfsdfs");
             //const githubToken = process.env.GITHUB_TOKEN || "";
             //const octokit = new github.GitHub(githubToken);
             const headCommit = githubPayload.head_commit;
-            const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)));
-            const dockerTag = dockerTagDate + githubPayload.after.substring(0, 7);
-            const dockerOptions = {
+            const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+            const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
+            const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
+            const githubChangesCommentParameters = {
                 repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
                 changesUrl: githubPayload.compare,
                 dockerTag: dockerTag,
-                dockerImageDigest: "testdigest"
+                dockerImageDigest: digest
             };
-            const comment = util.getGithubChangesComment(dockerOptions);
+            const comment = util.getGithubChangesComment(githubChangesCommentParameters);
             console.log(`The event payload: ${comment}`);
         }
         catch (error) {
@@ -14983,6 +14984,16 @@ function buildAndPush(options) {
         yield exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
         yield exec.exec(`docker push ${tagBuild}`);
         yield exec.exec(`docker push ${tagLatest}`);
+        let output = '';
+        const opts = {
+            listeners: {
+                stdout: (data) => {
+                    output += data.toString();
+                }
+            }
+        };
+        yield exec.exec(`docker inspect--format = '{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
+        return output;
     });
 }
 exports.buildAndPush = buildAndPush;
