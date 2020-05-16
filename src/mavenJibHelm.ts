@@ -19,15 +19,15 @@ async function mavenBuild() {
 }
 
 async function jibBuild(tag: string): Promise<void> {
-    const mavenPomFile = core.getInput('mavenPomFile');
-    const dockerImage = core.getInput('dockerImage');
+    const jibMavenPomFile = core.getInput('jibMavenPomFile');
     const dockerRegistryHost = core.getInput('dockerRegistryHost');
+    const dockerImage = core.getInput('dockerImage');
     const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
     const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
 
     const parameters: jib.JibParameters = {
         jibVersion: "2.2.0",
-        mavenPomFile: mavenPomFile,
+        mavenPomFile: jibMavenPomFile,
         fromImage: "adoptopenjdk/openjdk8-openj9:latest",
         registryHost: dockerRegistryHost,
         registryPassword: dockerRegistryPassword,

@@ -34,7 +34,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(456);
+/******/ 		return __webpack_require__(245);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -4060,6 +4060,54 @@ exports.Node = Node;
 
 /***/ }),
 
+/***/ 165:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const exec = __importStar(__webpack_require__(986));
+function build(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const jibVersion = params.jibVersion;
+        const mavenPomFile = params.mavenPomFile ? ' -f ' + params.mavenPomFile : '';
+        const registryHost = params.registryHost;
+        const dockerImage = params.dockerImage;
+        const tag = params.tag;
+        const registryUsername = params.registryUsername;
+        const registryPassword = params.registryPassword;
+        const fromImage = params.fromImage;
+        const registry = `${registryHost}/${dockerImage}`;
+        yield exec.exec(`mvn com.google.cloud.tools:jib-maven-plugin:${jibVersion}:build${mavenPomFile} \
+-Djdk.nativeCrypto=false \
+-Djib.to.tags=${tag} \
+-Djib.to.image=${registry} \
+-Djib.to.auth.username=${registryUsername} \
+-Djib.to.auth.password=${registryPassword} \
+-Djib.from.image=${fromImage}`);
+    });
+}
+exports.build = build;
+
+
+/***/ }),
+
 /***/ 168:
 /***/ (function(module) {
 
@@ -4490,6 +4538,136 @@ module.exports = require("https");
 /***/ (function(module) {
 
 module.exports = {"_from":"@octokit/rest@^16.43.1","_id":"@octokit/rest@16.43.1","_inBundle":false,"_integrity":"sha512-gfFKwRT/wFxq5qlNjnW2dh+qh74XgTQ2B179UX5K1HYCluioWj8Ndbgqw2PVqa1NnVJkGHp2ovMpVn/DImlmkw==","_location":"/@octokit/rest","_phantomChildren":{"@octokit/types":"2.15.0","deprecation":"2.3.1","once":"1.4.0","os-name":"3.1.0"},"_requested":{"type":"range","registry":true,"raw":"@octokit/rest@^16.43.1","name":"@octokit/rest","escapedName":"@octokit%2frest","scope":"@octokit","rawSpec":"^16.43.1","saveSpec":null,"fetchSpec":"^16.43.1"},"_requiredBy":["/@actions/github"],"_resolved":"https://registry.npmjs.org/@octokit/rest/-/rest-16.43.1.tgz","_shasum":"3b11e7d1b1ac2bbeeb23b08a17df0b20947eda6b","_spec":"@octokit/rest@^16.43.1","_where":"/home/yannick/dev/projects/actions/node_modules/@actions/github","author":{"name":"Gregor Martynus","url":"https://github.com/gr2m"},"bugs":{"url":"https://github.com/octokit/rest.js/issues"},"bundleDependencies":false,"bundlesize":[{"path":"./dist/octokit-rest.min.js.gz","maxSize":"33 kB"}],"contributors":[{"name":"Mike de Boer","email":"info@mikedeboer.nl"},{"name":"Fabian Jakobs","email":"fabian@c9.io"},{"name":"Joe Gallo","email":"joe@brassafrax.com"},{"name":"Gregor Martynus","url":"https://github.com/gr2m"}],"dependencies":{"@octokit/auth-token":"^2.4.0","@octokit/plugin-paginate-rest":"^1.1.1","@octokit/plugin-request-log":"^1.0.0","@octokit/plugin-rest-endpoint-methods":"2.4.0","@octokit/request":"^5.2.0","@octokit/request-error":"^1.0.2","atob-lite":"^2.0.0","before-after-hook":"^2.0.0","btoa-lite":"^1.0.0","deprecation":"^2.0.0","lodash.get":"^4.4.2","lodash.set":"^4.3.2","lodash.uniq":"^4.5.0","octokit-pagination-methods":"^1.1.0","once":"^1.4.0","universal-user-agent":"^4.0.0"},"deprecated":false,"description":"GitHub REST API client for Node.js","devDependencies":{"@gimenete/type-writer":"^0.1.3","@octokit/auth":"^1.1.1","@octokit/fixtures-server":"^5.0.6","@octokit/graphql":"^4.2.0","@types/node":"^13.1.0","bundlesize":"^0.18.0","chai":"^4.1.2","compression-webpack-plugin":"^3.1.0","cypress":"^3.0.0","glob":"^7.1.2","http-proxy-agent":"^4.0.0","lodash.camelcase":"^4.3.0","lodash.merge":"^4.6.1","lodash.upperfirst":"^4.3.1","lolex":"^5.1.2","mkdirp":"^1.0.0","mocha":"^7.0.1","mustache":"^4.0.0","nock":"^11.3.3","npm-run-all":"^4.1.2","nyc":"^15.0.0","prettier":"^1.14.2","proxy":"^1.0.0","semantic-release":"^17.0.0","sinon":"^8.0.0","sinon-chai":"^3.0.0","sort-keys":"^4.0.0","string-to-arraybuffer":"^1.0.0","string-to-jsdoc-comment":"^1.0.0","typescript":"^3.3.1","webpack":"^4.0.0","webpack-bundle-analyzer":"^3.0.0","webpack-cli":"^3.0.0"},"files":["index.js","index.d.ts","lib","plugins"],"homepage":"https://github.com/octokit/rest.js#readme","keywords":["octokit","github","rest","api-client"],"license":"MIT","name":"@octokit/rest","nyc":{"ignore":["test"]},"publishConfig":{"access":"public"},"release":{"publish":["@semantic-release/npm",{"path":"@semantic-release/github","assets":["dist/*","!dist/*.map.gz"]}]},"repository":{"type":"git","url":"git+https://github.com/octokit/rest.js.git"},"scripts":{"build":"npm-run-all build:*","build:browser":"npm-run-all build:browser:*","build:browser:development":"webpack --mode development --entry . --output-library=Octokit --output=./dist/octokit-rest.js --profile --json > dist/bundle-stats.json","build:browser:production":"webpack --mode production --entry . --plugin=compression-webpack-plugin --output-library=Octokit --output-path=./dist --output-filename=octokit-rest.min.js --devtool source-map","build:ts":"npm run -s update-endpoints:typescript","coverage":"nyc report --reporter=html && open coverage/index.html","generate-bundle-report":"webpack-bundle-analyzer dist/bundle-stats.json --mode=static --no-open --report dist/bundle-report.html","lint":"prettier --check '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","lint:fix":"prettier --write '{lib,plugins,scripts,test}/**/*.{js,json,ts}' 'docs/*.{js,json}' 'docs/src/**/*' index.js README.md package.json","postvalidate:ts":"tsc --noEmit --target es6 test/typescript-validate.ts","prebuild:browser":"mkdirp dist/","pretest":"npm run -s lint","prevalidate:ts":"npm run -s build:ts","start-fixtures-server":"octokit-fixtures-server","test":"nyc mocha test/mocha-node-setup.js \"test/*/**/*-test.js\"","test:browser":"cypress run --browser chrome","update-endpoints":"npm-run-all update-endpoints:*","update-endpoints:fetch-json":"node scripts/update-endpoints/fetch-json","update-endpoints:typescript":"node scripts/update-endpoints/typescript","validate:ts":"tsc --target es6 --noImplicitAny index.d.ts"},"types":"index.d.ts","version":"16.43.1"};
+
+/***/ }),
+
+/***/ 245:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __importStar(__webpack_require__(470));
+const github = __importStar(__webpack_require__(469));
+const maven = __importStar(__webpack_require__(949));
+const jib = __importStar(__webpack_require__(165));
+const util = __importStar(__webpack_require__(887));
+const git = __importStar(__webpack_require__(776));
+function mavenBuild() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const mavenPomFile = core.getInput('mavenPomFile');
+        const skipTests = core.getInput('mavenSkipTests');
+        const mavenParameters = {
+            options: "-B",
+            mavenPomFile: mavenPomFile,
+            goals: "clean package",
+            skipTests: skipTests === 'true'
+        };
+        yield maven.build(mavenParameters);
+    });
+}
+function jibBuild(tag) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const jibMavenPomFile = core.getInput('jibMavenPomFile');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
+        const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
+        const parameters = {
+            jibVersion: "2.2.0",
+            mavenPomFile: jibMavenPomFile,
+            fromImage: "adoptopenjdk/openjdk8-openj9:latest",
+            registryHost: dockerRegistryHost,
+            registryPassword: dockerRegistryPassword,
+            registryUsername: dockerRegistryUsername,
+            dockerImage: dockerImage,
+            tag: tag
+        };
+        return yield jib.build(parameters);
+    });
+}
+function gitOps(githubPayload, dockerTag) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const gitOpsType = core.getInput('gitOpsType', { required: true });
+        const gitOpsOwner = core.getInput('gitOpsOwner', { required: true });
+        const gitOpsRepo = core.getInput('gitOpsRepo', { required: true });
+        const gitOpsBranch = core.getInput('gitOpsBranch', { required: true });
+        const gitOpsFilePath = core.getInput('gitOpsFilePath', { required: true });
+        const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
+        const octokit = new github.GitHub(gitHubToken);
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
+        const githubChangesCommentParameters = {
+            repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
+            changesUrl: githubPayload.compare,
+            dockerTag: dockerTag
+        };
+        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
+        let modifierFunction;
+        if (gitOpsType === 'HelmRelease') {
+            modifierFunction = value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
+                return finalValue;
+            };
+        }
+        if (gitOpsType === 'Application') {
+            modifierFunction = value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
+                return finalValue;
+            };
+        }
+        const remoteFileModificationOptions = {
+            branch: gitOpsBranch,
+            octokit: octokit,
+            owner: gitOpsOwner,
+            repo: gitOpsRepo,
+            path: gitOpsFilePath,
+            modifier: modifierFunction,
+            message: comment,
+            committer: githubPayload.pusher
+        };
+        yield git.modifyGitFile(remoteFileModificationOptions);
+    });
+}
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const githubPayload = github.context.payload;
+            const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+            const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
+            const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
+            yield mavenBuild();
+            yield jibBuild(dockerTag);
+            yield gitOps(githubPayload, dockerTag);
+        }
+        catch (error) {
+            core.setFailed(error.message);
+        }
+    });
+}
+run();
+exports.default = run;
+
 
 /***/ }),
 
@@ -9601,138 +9779,6 @@ exports.Headers = Headers;
 exports.Request = Request;
 exports.Response = Response;
 exports.FetchError = FetchError;
-
-
-/***/ }),
-
-/***/ 456:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(__webpack_require__(470));
-const github = __importStar(__webpack_require__(469));
-const maven = __importStar(__webpack_require__(949));
-const docker = __importStar(__webpack_require__(772));
-const util = __importStar(__webpack_require__(887));
-const git = __importStar(__webpack_require__(776));
-function mavenBuild() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const mavenPomFile = core.getInput('mavenPomFile');
-        const skipTests = core.getInput('mavenSkipTests');
-        const mavenParameters = {
-            options: "-B",
-            mavenPomFile: mavenPomFile,
-            goals: "clean package",
-            skipTests: skipTests === 'true'
-        };
-        yield maven.build(mavenParameters);
-    });
-}
-function dockerBuild(tag) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const dockerFileLocation = core.getInput('dockerFileLocation');
-        const dockerImage = core.getInput('dockerImage');
-        const dockerRegistryHost = core.getInput('dockerRegistryHost');
-        const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
-        const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
-        const dockerBuildx = core.getInput('dockerBuildx');
-        const dockerPushLatest = core.getInput('dockerPushLatest');
-        const dockerOptions = {
-            dockerFileLocation: dockerFileLocation,
-            dockerImage: dockerImage,
-            registryHost: dockerRegistryHost,
-            registryPassword: dockerRegistryPassword,
-            registryUsername: dockerRegistryUsername,
-            tag: tag,
-            buildx: dockerBuildx === 'true',
-            pushLatest: dockerPushLatest !== 'false',
-        };
-        return yield docker.buildAndPush(dockerOptions);
-    });
-}
-function gitOps(githubPayload, dockerTag) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const gitOpsType = core.getInput('gitOpsType', { required: true });
-        const gitOpsOwner = core.getInput('gitOpsOwner', { required: true });
-        const gitOpsRepo = core.getInput('gitOpsRepo', { required: true });
-        const gitOpsBranch = core.getInput('gitOpsBranch', { required: true });
-        const gitOpsFilePath = core.getInput('gitOpsFilePath', { required: true });
-        const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
-        const octokit = new github.GitHub(gitHubToken);
-        const dockerImage = core.getInput('dockerImage');
-        const dockerRegistryHost = core.getInput('dockerRegistryHost');
-        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
-        const githubChangesCommentParameters = {
-            repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
-            changesUrl: githubPayload.compare,
-            dockerTag: dockerTag
-        };
-        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
-        let modifierFunction;
-        if (gitOpsType === 'HelmRelease') {
-            modifierFunction = value => {
-                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
-                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
-                return finalValue;
-            };
-        }
-        if (gitOpsType === 'Application') {
-            modifierFunction = value => {
-                const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
-                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
-                return finalValue;
-            };
-        }
-        const remoteFileModificationOptions = {
-            branch: gitOpsBranch,
-            octokit: octokit,
-            owner: gitOpsOwner,
-            repo: gitOpsRepo,
-            path: gitOpsFilePath,
-            modifier: modifierFunction,
-            message: comment,
-            committer: githubPayload.pusher
-        };
-        yield git.modifyGitFile(remoteFileModificationOptions);
-    });
-}
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const githubPayload = github.context.payload;
-            const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-            const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
-            const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
-            yield mavenBuild();
-            yield dockerBuild(dockerTag);
-            yield gitOps(githubPayload, dockerTag);
-        }
-        catch (error) {
-            core.setFailed(error.message);
-        }
-    });
-}
-run();
-exports.default = run;
 
 
 /***/ }),
@@ -14982,67 +15028,6 @@ module.exports = function (x) {
 
 	return x;
 };
-
-
-/***/ }),
-
-/***/ 772:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const exec = __importStar(__webpack_require__(986));
-function buildAndPush(options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const registryHost = options.registryHost;
-        const dockerImage = options.dockerImage;
-        const tag = options.tag;
-        const registryUsername = options.registryUsername;
-        const registryPassword = options.registryPassword;
-        const dockerFileLocation = options.dockerFileLocation;
-        const buildx = options.buildx ? ' buildx' : '';
-        const pushLatest = options.pushLatest;
-        const registry = `${registryHost}/${dockerImage}`;
-        const tagBuild = `${registry}:${tag}`;
-        const tagLatest = `${registry}:latest`;
-        const cacheFrom = options.pushLatest ? ` --cache-from ${tagLatest}` : '';
-        yield exec.exec(`docker login ${registryHost} -u ${registryUsername} -p ${registryPassword}`);
-        yield exec.exec(`docker${buildx} build${cacheFrom} -t ${tagBuild} ${dockerFileLocation}`);
-        yield exec.exec(`docker tag ${tagBuild} ${tagLatest}`);
-        yield exec.exec(`docker push ${tagBuild}`);
-        if (pushLatest) {
-            yield exec.exec(`docker push ${tagLatest}`);
-        }
-        let output = '';
-        const opts = {
-            listeners: {
-                stdout: (data) => {
-                    output += data.toString();
-                }
-            }
-        };
-        //await exec.exec(`docker inspect --format='{{index .RepoDigests 0}}' ${tagLatest}`, [], opts);
-        return output;
-    });
-}
-exports.buildAndPush = buildAndPush;
 
 
 /***/ }),
