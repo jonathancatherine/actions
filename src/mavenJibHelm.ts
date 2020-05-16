@@ -8,13 +8,20 @@ import * as git from "./utils/git";
 async function mavenBuild() {
     const mavenPomFile = core.getInput('mavenPomFile');
     const skipTests = core.getInput('mavenSkipTests');
+    const goals = core.getInput('mavenGoals') || "clean install"
+    const mavenRepoId = core.getInput('mavenRepoId');
+    const mavenRepoUsername = core.getInput('mavenRepoUsername');
+    const mavenRepoToken = core.getInput('mavenRepoToken');
 
     const mavenParameters: maven.MavenParameters = {
         options: "-B",
         mavenPomFile: mavenPomFile,
         argument: "-T 1C",
-        goals: "clean install",
-        skipTests: skipTests === 'true'
+        goals: goals,
+        skipTests: skipTests === 'true',
+        repoId: mavenRepoId,
+        repoUsername: mavenRepoUsername,
+        repoToken: mavenRepoToken,
     };
     await maven.build(mavenParameters);
 }

@@ -4573,12 +4573,19 @@ function mavenBuild() {
     return __awaiter(this, void 0, void 0, function* () {
         const mavenPomFile = core.getInput('mavenPomFile');
         const skipTests = core.getInput('mavenSkipTests');
+        const goals = core.getInput('mavenGoals') || "clean install";
+        const mavenRepoId = core.getInput('mavenRepoId');
+        const mavenRepoUsername = core.getInput('mavenRepoUsername');
+        const mavenRepoToken = core.getInput('mavenRepoToken');
         const mavenParameters = {
             options: "-B",
             mavenPomFile: mavenPomFile,
             argument: "-T 1C",
-            goals: "clean install",
-            skipTests: skipTests === 'true'
+            goals: goals,
+            skipTests: skipTests === 'true',
+            repoId: mavenRepoId,
+            repoUsername: mavenRepoUsername,
+            repoToken: mavenRepoToken,
         };
         yield maven.build(mavenParameters);
     });
@@ -32249,12 +32256,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const exec = __importStar(__webpack_require__(986));
 function build(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const options = params.options ? ' ' + params.options : '';
+        const options = params.options ? ` ${params.options}` : '';
         const goals = params.goals;
         const mavenPomFile = params.mavenPomFile ? ' -f ' + params.mavenPomFile : '';
-        const argument = params.argument ? ' ' + params.argument : '';
+        const argument = params.argument ? ` ${params.argument}` : '';
         const skipTestsArgument = params.skipTests ? ' -DskipTests' : '';
-        yield exec.exec(`mvn${options}${mavenPomFile} ${goals}${argument}${skipTestsArgument}`);
+        const repoId = params.repoId ? ` -Drepo.id=${params.repoId}` : '';
+        const settings = params.repoId ? ` -s settings.xml` : '';
+        const repoUsername = params.repoUsername ? ` -Drepo.username=${params.repoUsername}` : '';
+        const repoToken = params.repoToken ? ` -Drepo.token=${params.repoToken}` : '';
+        if (params.repoId) {
+            yield exec.exec(`cat > settings.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <servers>
+    <server>
+        <id>\${repo.id}</id>
+        <username>\${repo.username}</username>
+        <password>\${repo.token}</password>
+    </server>
+    </servers>
+</settings>
+EOF`);
+        }
+        yield exec.exec(`mvn${options}${settings}${mavenPomFile} ${goals}${argument}${skipTestsArgument}${repoId}${repoUsername}${repoToken}`);
     });
 }
 exports.build = build;
