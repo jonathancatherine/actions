@@ -4576,7 +4576,7 @@ function mavenBuild() {
         const mavenParameters = {
             options: "-B",
             mavenPomFile: mavenPomFile,
-            goals: "clean package",
+            goals: "clean install",
             skipTests: skipTests === 'true'
         };
         yield maven.build(mavenParameters);

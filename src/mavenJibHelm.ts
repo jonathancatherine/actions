@@ -12,7 +12,7 @@ async function mavenBuild() {
     const mavenParameters: maven.MavenParameters = {
         options: "-B",
         mavenPomFile: mavenPomFile,
-        goals: "clean package",
+        goals: "clean install",
         skipTests: skipTests === 'true'
     };
     await maven.build(mavenParameters);
