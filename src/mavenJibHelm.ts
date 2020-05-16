@@ -32,11 +32,12 @@ async function jibBuild(tag: string): Promise<void> {
     const dockerImage = core.getInput('dockerImage');
     const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
     const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
+    const jibFromImage = core.getInput('jibFromImage') || "adoptopenjdk/openjdk8-openj9:latest"
 
     const parameters: jib.JibParameters = {
         jibVersion: "2.2.0",
         mavenPomFile: jibMavenPomFile,
-        fromImage: "adoptopenjdk/openjdk8-openj9:latest",
+        fromImage: jibFromImage,
         registryHost: dockerRegistryHost,
         registryPassword: dockerRegistryPassword,
         registryUsername: dockerRegistryUsername,
