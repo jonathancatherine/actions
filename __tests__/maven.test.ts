@@ -19,18 +19,7 @@ describe('buildAndPush tests', () => {
         await maven.build(dockerOptions);
 
         expect(execMock).toHaveBeenCalledTimes(2);
-        expect(execMock).toHaveBeenNthCalledWith(1, `cat > settings.xml << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<settings>
-    <servers>
-    <server>
-        <id>\${repo.id}</id>
-        <username>\${repo.username}</username>
-        <password>\${repo.token}</password>
-    </server>
-    </servers>
-</settings>
-EOF`);
+        expect(execMock).toHaveBeenNthCalledWith(1, `echo "<?xml version="1.0" encoding="UTF-8"?><settings><servers><server><id>\${repo.id}</id><username>\${repo.username}</username><password>\${repo.token}</password></server></servers></settings>" > settings.xml`);
         expect(execMock).toHaveBeenNthCalledWith(2, "mvn -B -s settings.xml -f test/pom.xml clean install -nsu -Drepo.id=repo -Drepo.username=usernametest -Drepo.token=tokentest");
     })
 
