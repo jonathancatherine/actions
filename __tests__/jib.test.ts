@@ -19,7 +19,7 @@ describe('buildAndPush tests', () => {
         await jib.build(dockerOptions);
 
         expect(execMock).toHaveBeenCalledTimes(1);
-        expect(execMock).toHaveBeenNthCalledWith(1, `mvn com.google.cloud.tools:jib-maven-plugin:2.2.0:build -f test/pom.xml \
+        expect(execMock).toHaveBeenNthCalledWith(1, `mvn -B com.google.cloud.tools:jib-maven-plugin:2.2.0:build -f test/pom.xml \
 -Djdk.nativeCrypto=false \
 -Djib.to.tags=1000 \
 -Djib.to.image=registry.com/imagepath/image \
@@ -43,7 +43,7 @@ describe('buildAndPush tests', () => {
         await jib.build(dockerOptions);
 
         expect(execMock).toHaveBeenCalledTimes(1);
-        expect(execMock).toHaveBeenNthCalledWith(1, `mvn com.google.cloud.tools:jib-maven-plugin:2.2.0:build \
+        expect(execMock).toHaveBeenNthCalledWith(1, `mvn -B com.google.cloud.tools:jib-maven-plugin:2.2.0:build \
 -Djdk.nativeCrypto=false \
 -Djib.to.tags=1000 \
 -Djib.to.image=registry.com/imagepath/image \

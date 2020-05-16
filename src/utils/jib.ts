@@ -24,7 +24,7 @@ export async function build(params: JibParameters): Promise<void> {
 
     const registry = `${registryHost}/${dockerImage}`;
 
-    await exec.exec(`mvn com.google.cloud.tools:jib-maven-plugin:${jibVersion}:build${mavenPomFile} \
+    await exec.exec(`mvn -B com.google.cloud.tools:jib-maven-plugin:${jibVersion}:build${mavenPomFile} \
 -Djdk.nativeCrypto=false \
 -Djib.to.tags=${tag} \
 -Djib.to.image=${registry} \

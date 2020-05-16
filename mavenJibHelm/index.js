@@ -4094,7 +4094,7 @@ function build(params) {
         const registryPassword = params.registryPassword;
         const fromImage = params.fromImage;
         const registry = `${registryHost}/${dockerImage}`;
-        yield exec.exec(`mvn com.google.cloud.tools:jib-maven-plugin:${jibVersion}:build${mavenPomFile} \
+        yield exec.exec(`mvn -B com.google.cloud.tools:jib-maven-plugin:${jibVersion}:build${mavenPomFile} \
 -Djdk.nativeCrypto=false \
 -Djib.to.tags=${tag} \
 -Djib.to.image=${registry} \
