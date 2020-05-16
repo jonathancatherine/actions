@@ -12,6 +12,7 @@ async function mavenBuild() {
     const mavenParameters: maven.MavenParameters = {
         options: "-B",
         mavenPomFile: mavenPomFile,
+        argument: "-T 1C",
         goals: "clean install",
         skipTests: skipTests === 'true'
     };
