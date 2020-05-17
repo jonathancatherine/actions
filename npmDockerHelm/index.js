@@ -11329,6 +11329,9 @@ function build(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const folderInstall = params.folder ? ` ${params.folder}` : '';
         const folderRun = params.folder ? ` --prefix ${params.folder}` : '';
+        if (params.folder) {
+            yield exec.exec(`head -20 ${params.folder}/package.json`);
+        }
         yield exec.exec(`npm install${folderInstall}`);
         yield exec.exec(`npm run${folderRun} build`);
     });

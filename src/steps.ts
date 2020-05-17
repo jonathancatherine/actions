@@ -25,6 +25,7 @@ export async function dockerBuild(tag: string): Promise<string> {
         buildx: dockerBuildx === 'true',
         pushLatest: dockerPushLatest !== 'false',
     };
+
     return await docker.buildAndPush(dockerOptions);
 }
 
