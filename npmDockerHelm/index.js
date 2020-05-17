@@ -11329,7 +11329,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const exec = __importStar(__webpack_require__(986));
 function build(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const folderInstall = params.folder ? `cd ${params.folder};` : '';
+        //const folderInstall = params.folder ? `${params.folder};` : '';
         //const folderRun = params.folder ? ` --prefix ${params.folder}` : '';
         const globalPackages = params.globalPackages;
         if (params.folder) {
@@ -11340,8 +11340,14 @@ function build(params) {
                 yield exec.exec(`npm install ${globalPackage}`);
             }
         }
-        yield exec.exec(`${folderInstall}npm install`);
-        yield exec.exec(`${folderInstall}npm run build`);
+        if (params.folder) {
+            yield exec.exec(`npm install`, [], { cwd: params.folder });
+            yield exec.exec(`npm run build`, [], { cwd: params.folder });
+        }
+        else {
+            yield exec.exec(`npm install`);
+            yield exec.exec(`npm run build`);
+        }
     });
 }
 exports.build = build;
