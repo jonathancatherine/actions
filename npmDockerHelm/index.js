@@ -11337,7 +11337,7 @@ function build(params) {
         }
         if (globalPackages) {
             for (let globalPackage of globalPackages) {
-                yield exec.exec(`npm install -g ${globalPackage}`);
+                yield exec.exec(`npm install ${globalPackage}`);
             }
         }
         yield exec.exec(`npm install${folderInstall}`);

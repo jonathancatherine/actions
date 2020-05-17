@@ -40,7 +40,7 @@ describe('buildAndPush tests', () => {
         await npm.build(parameters);
 
         expect(execMock).toHaveBeenCalledTimes(3);
-        expect(execMock).toHaveBeenNthCalledWith(1, "npm install -g @ionic/app-scripts@^3.1.9");
+        expect(execMock).toHaveBeenNthCalledWith(1, "npm install @ionic/app-scripts@^3.1.9");
         expect(execMock).toHaveBeenNthCalledWith(2, "npm install");
         expect(execMock).toHaveBeenNthCalledWith(3, "npm run build");
     })
@@ -54,8 +54,8 @@ describe('buildAndPush tests', () => {
         await npm.build(parameters);
 
         expect(execMock).toHaveBeenCalledTimes(4);
-        expect(execMock).toHaveBeenNthCalledWith(1, "npm install -g @ionic/app-scripts@^3.1.9");
-        expect(execMock).toHaveBeenNthCalledWith(2, "npm install -g test@1.2.3");
+        expect(execMock).toHaveBeenNthCalledWith(1, "npm install @ionic/app-scripts@^3.1.9");
+        expect(execMock).toHaveBeenNthCalledWith(2, "npm install test@1.2.3");
         expect(execMock).toHaveBeenNthCalledWith(3, "npm install");
         expect(execMock).toHaveBeenNthCalledWith(4, "npm run build");
     })

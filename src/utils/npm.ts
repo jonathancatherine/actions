@@ -17,7 +17,7 @@ export async function build(params: NpmParameters): Promise<void> {
 
     if (globalPackages) {
         for (let globalPackage of globalPackages) {
-            await exec.exec(`npm install -g ${globalPackage}`);
+            await exec.exec(`npm install ${globalPackage}`);
         }
     }
 
