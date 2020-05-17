@@ -4060,6 +4060,154 @@ exports.Node = Node;
 
 /***/ }),
 
+/***/ 165:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const docker = __importStar(__webpack_require__(772));
+const core = __importStar(__webpack_require__(470));
+const maven = __importStar(__webpack_require__(949));
+const jib = __importStar(__webpack_require__(745));
+const github = __importStar(__webpack_require__(469));
+const util = __importStar(__webpack_require__(887));
+const git = __importStar(__webpack_require__(776));
+function dockerBuild(tag) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const dockerFileLocation = core.getInput('dockerFileLocation');
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
+        const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
+        const dockerBuildx = core.getInput('dockerBuildx');
+        const dockerPushLatest = core.getInput('dockerPushLatest');
+        const dockerOptions = {
+            dockerFileLocation: dockerFileLocation,
+            dockerImage: dockerImage,
+            registryHost: dockerRegistryHost,
+            registryPassword: dockerRegistryPassword,
+            registryUsername: dockerRegistryUsername,
+            tag: tag,
+            buildx: dockerBuildx === 'true',
+            pushLatest: dockerPushLatest !== 'false',
+        };
+        return yield docker.buildAndPush(dockerOptions);
+    });
+}
+exports.dockerBuild = dockerBuild;
+function mavenBuild() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const mavenPomFile = core.getInput('mavenPomFile');
+        const skipTests = core.getInput('mavenSkipTests');
+        const goals = core.getInput('mavenGoals') || "clean install";
+        const mavenRepoId = core.getInput('mavenRepoId');
+        const mavenRepoUsername = core.getInput('mavenRepoUsername');
+        const mavenRepoToken = core.getInput('mavenRepoToken');
+        const mavenParameters = {
+            options: "-B",
+            mavenPomFile: mavenPomFile,
+            argument: "-T 1C",
+            goals: goals,
+            skipTests: skipTests === 'true',
+            repoId: mavenRepoId,
+            repoUsername: mavenRepoUsername,
+            repoToken: mavenRepoToken,
+        };
+        yield maven.build(mavenParameters);
+    });
+}
+exports.mavenBuild = mavenBuild;
+function jibBuild(tag) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const jibMavenPomFile = core.getInput('jibMavenPomFile');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
+        const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
+        const jibFromImage = core.getInput('jibFromImage') || "adoptopenjdk/openjdk8-openj9:latest";
+        const parameters = {
+            jibVersion: "2.2.0",
+            mavenPomFile: jibMavenPomFile,
+            fromImage: jibFromImage,
+            registryHost: dockerRegistryHost,
+            registryPassword: dockerRegistryPassword,
+            registryUsername: dockerRegistryUsername,
+            dockerImage: dockerImage,
+            tag: tag
+        };
+        return yield jib.build(parameters);
+    });
+}
+exports.jibBuild = jibBuild;
+function gitOps(githubPayload, dockerTag) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const gitOpsType = core.getInput('gitOpsType', { required: true });
+        const gitOpsOwner = core.getInput('gitOpsOwner', { required: true });
+        const gitOpsRepo = core.getInput('gitOpsRepo', { required: true });
+        const gitOpsBranch = core.getInput('gitOpsBranch', { required: true });
+        const gitOpsFilePath = core.getInput('gitOpsFilePath', { required: true });
+        const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
+        const octokit = new github.GitHub(gitHubToken);
+        const dockerImage = core.getInput('dockerImage');
+        const dockerRegistryHost = core.getInput('dockerRegistryHost');
+        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
+        const githubChangesCommentParameters = {
+            repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
+            changesUrl: githubPayload.compare,
+            dockerTag: dockerTag
+        };
+        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
+        let modifierFunction;
+        if (gitOpsType === 'HelmRelease') {
+            modifierFunction = value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
+                return finalValue;
+            };
+        }
+        if (gitOpsType === 'Application') {
+            modifierFunction = value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
+                return finalValue;
+            };
+        }
+        const remoteFileModificationOptions = {
+            branch: gitOpsBranch,
+            octokit: octokit,
+            owner: gitOpsOwner,
+            repo: gitOpsRepo,
+            path: gitOpsFilePath,
+            modifier: modifierFunction,
+            message: comment,
+            committer: githubPayload.pusher
+        };
+        yield git.modifyGitFile(remoteFileModificationOptions);
+    });
+}
+exports.gitOps = gitOps;
+
+
+/***/ }),
+
 /***/ 168:
 /***/ (function(module) {
 
@@ -9629,92 +9777,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
-const maven = __importStar(__webpack_require__(949));
-const docker = __importStar(__webpack_require__(772));
 const util = __importStar(__webpack_require__(887));
-const git = __importStar(__webpack_require__(776));
-function mavenBuild() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const mavenPomFile = core.getInput('mavenPomFile');
-        const skipTests = core.getInput('mavenSkipTests');
-        const mavenParameters = {
-            options: "-B",
-            mavenPomFile: mavenPomFile,
-            goals: "clean package",
-            skipTests: skipTests === 'true'
-        };
-        yield maven.build(mavenParameters);
-    });
-}
-function dockerBuild(tag) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const dockerFileLocation = core.getInput('dockerFileLocation');
-        const dockerImage = core.getInput('dockerImage');
-        const dockerRegistryHost = core.getInput('dockerRegistryHost');
-        const dockerRegistryUsername = core.getInput('dockerRegistryUsername');
-        const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
-        const dockerBuildx = core.getInput('dockerBuildx');
-        const dockerPushLatest = core.getInput('dockerPushLatest');
-        const dockerOptions = {
-            dockerFileLocation: dockerFileLocation,
-            dockerImage: dockerImage,
-            registryHost: dockerRegistryHost,
-            registryPassword: dockerRegistryPassword,
-            registryUsername: dockerRegistryUsername,
-            tag: tag,
-            buildx: dockerBuildx === 'true',
-            pushLatest: dockerPushLatest !== 'false',
-        };
-        return yield docker.buildAndPush(dockerOptions);
-    });
-}
-function gitOps(githubPayload, dockerTag) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const gitOpsType = core.getInput('gitOpsType', { required: true });
-        const gitOpsOwner = core.getInput('gitOpsOwner', { required: true });
-        const gitOpsRepo = core.getInput('gitOpsRepo', { required: true });
-        const gitOpsBranch = core.getInput('gitOpsBranch', { required: true });
-        const gitOpsFilePath = core.getInput('gitOpsFilePath', { required: true });
-        const gitHubToken = process.env.GITHUB_TOKEN || core.getInput('gitToken');
-        const octokit = new github.GitHub(gitHubToken);
-        const dockerImage = core.getInput('dockerImage');
-        const dockerRegistryHost = core.getInput('dockerRegistryHost');
-        const dockerImageRepository = `${dockerRegistryHost}/${dockerImage}`;
-        const githubChangesCommentParameters = {
-            repository: ((_a = githubPayload.repository) === null || _a === void 0 ? void 0 : _a.full_name) || "",
-            changesUrl: githubPayload.compare,
-            dockerTag: dockerTag
-        };
-        const comment = util.getGithubChangesComment(githubChangesCommentParameters);
-        let modifierFunction;
-        if (gitOpsType === 'HelmRelease') {
-            modifierFunction = value => {
-                const valueWithTag = util.replaceValueInYamlString(value, "spec.values.image.tag", dockerTag);
-                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.values.image.repository", dockerImageRepository);
-                return finalValue;
-            };
-        }
-        if (gitOpsType === 'Application') {
-            modifierFunction = value => {
-                const valueWithTag = util.replaceValueInYamlString(value, "spec.source.helm.parameters[1].value", dockerTag);
-                const finalValue = util.replaceValueInYamlString(valueWithTag, "spec.source.helm.parameters[0].value", dockerImageRepository);
-                return finalValue;
-            };
-        }
-        const remoteFileModificationOptions = {
-            branch: gitOpsBranch,
-            octokit: octokit,
-            owner: gitOpsOwner,
-            repo: gitOpsRepo,
-            path: gitOpsFilePath,
-            modifier: modifierFunction,
-            message: comment,
-            committer: githubPayload.pusher
-        };
-        yield git.modifyGitFile(remoteFileModificationOptions);
-    });
-}
+const steps_1 = __webpack_require__(165);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -9722,9 +9786,9 @@ function run() {
             const canadaTime = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
             const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
             const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
-            yield mavenBuild();
-            yield dockerBuild(dockerTag);
-            yield gitOps(githubPayload, dockerTag);
+            yield steps_1.mavenBuild();
+            yield steps_1.dockerBuild(dockerTag);
+            yield steps_1.gitOps(githubPayload, dockerTag);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -14729,6 +14793,54 @@ function sync (path, options) {
     }
   }
 }
+
+
+/***/ }),
+
+/***/ 745:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const exec = __importStar(__webpack_require__(986));
+function build(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const jibVersion = params.jibVersion;
+        const mavenPomFile = params.mavenPomFile ? ' -f ' + params.mavenPomFile : '';
+        const registryHost = params.registryHost;
+        const dockerImage = params.dockerImage;
+        const tag = params.tag;
+        const registryUsername = params.registryUsername;
+        const registryPassword = params.registryPassword;
+        const fromImage = params.fromImage;
+        const registry = `${registryHost}/${dockerImage}`;
+        yield exec.exec(`mvn -B com.google.cloud.tools:jib-maven-plugin:${jibVersion}:build${mavenPomFile} \
+-Djdk.nativeCrypto=false \
+-Djib.to.tags=${tag} \
+-Djib.to.image=${registry} \
+-Djib.to.auth.username=${registryUsername} \
+-Djib.to.auth.password=${registryPassword} \
+-Djib.from.image=${fromImage}`);
+    });
+}
+exports.build = build;
 
 
 /***/ }),
@@ -32263,12 +32375,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const exec = __importStar(__webpack_require__(986));
 function build(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        const options = params.options ? ' ' + params.options : '';
+        const options = params.options ? ` ${params.options}` : '';
         const goals = params.goals;
         const mavenPomFile = params.mavenPomFile ? ' -f ' + params.mavenPomFile : '';
-        const argument = params.argument ? ' ' + params.argument : '';
+        const argument = params.argument ? ` ${params.argument}` : '';
         const skipTestsArgument = params.skipTests ? ' -DskipTests' : '';
-        yield exec.exec(`mvn${options}${mavenPomFile} ${goals}${argument}${skipTestsArgument}`);
+        const repoId = params.repoId ? ` -Drepo.id=${params.repoId}` : '';
+        const settings = params.repoId ? ` -s settings.xml` : '';
+        const repoUsername = params.repoUsername ? ` -Drepo.username=${params.repoUsername}` : '';
+        const repoToken = params.repoToken ? ` -Drepo.token=${params.repoToken}` : '';
+        yield exec.exec(`mvn${options}${settings}${mavenPomFile} ${goals}${argument}${skipTestsArgument}${repoId}${repoUsername}${repoToken}`);
     });
 }
 exports.build = build;

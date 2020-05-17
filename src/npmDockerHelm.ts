@@ -1,7 +1,16 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import * as npm from "../src/utils/npm";
 import * as util from "../src/utils/util";
-import {dockerBuild, gitOps, mavenBuild} from "./steps";
+import {dockerBuild, gitOps} from "./steps";
+
+async function npmBuild() {
+    const npmFolder = core.getInput('npmFolder');
+    const parameters: npm.NpmParameters = {
+        folder:npmFolder
+    };
+    await npm.build(parameters);
+}
 
 async function run(): Promise<void> {
     try {
@@ -10,7 +19,7 @@ async function run(): Promise<void> {
         const dockerTagDate = util.getDateString((new Date(Date.now() - (new Date(canadaTime)).getTimezoneOffset() * 60000)));
         const dockerTag = `${dockerTagDate}-${githubPayload.after.substring(0, 7)}`;
 
-        await mavenBuild();
+        await npmBuild();
         await dockerBuild(dockerTag);
         await gitOps(githubPayload, dockerTag);
     } catch (error) {
