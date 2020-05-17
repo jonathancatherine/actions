@@ -3702,8 +3702,10 @@ const steps_1 = __webpack_require__(165);
 function npmBuild() {
     return __awaiter(this, void 0, void 0, function* () {
         const npmFolder = core.getInput('npmFolder');
+        const npmGlobalPackages = core.getInput('npmGlobalPackages');
         const parameters = {
-            folder: npmFolder
+            folder: npmFolder,
+            globalPackages: npmGlobalPackages.split(",")
         };
         yield npm.build(parameters);
     });
@@ -11329,8 +11331,14 @@ function build(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const folderInstall = params.folder ? ` ${params.folder}` : '';
         const folderRun = params.folder ? ` --prefix ${params.folder}` : '';
+        const globalPackages = params.globalPackages;
         if (params.folder) {
             yield exec.exec(`head -20 ${params.folder}/package.json`);
+        }
+        if (globalPackages) {
+            for (let globalPackage of globalPackages) {
+                yield exec.exec(`npm install -g ${globalPackage}`);
+            }
         }
         yield exec.exec(`npm install${folderInstall}`);
         yield exec.exec(`npm run${folderRun} build`);

@@ -29,4 +29,47 @@ describe('buildAndPush tests', () => {
         expect(execMock).toHaveBeenNthCalledWith(2, "npm install test-folder");
         expect(execMock).toHaveBeenNthCalledWith(3, "npm run --prefix test-folder build");
     })
+
+
+    it('with 1 global package', async () => {
+        const parameters: npm.NpmParameters = {
+            globalPackages: ["@ionic/app-scripts@^3.1.9"]
+        };
+
+        const execMock = jest.spyOn(exec, "exec");
+        await npm.build(parameters);
+
+        expect(execMock).toHaveBeenCalledTimes(3);
+        expect(execMock).toHaveBeenNthCalledWith(1, "npm install -g @ionic/app-scripts@^3.1.9");
+        expect(execMock).toHaveBeenNthCalledWith(2, "npm install");
+        expect(execMock).toHaveBeenNthCalledWith(3, "npm run build");
+    })
+
+    it('with 2 global packages', async () => {
+        const parameters: npm.NpmParameters = {
+            globalPackages: ["@ionic/app-scripts@^3.1.9", "test@1.2.3"]
+        };
+
+        const execMock = jest.spyOn(exec, "exec");
+        await npm.build(parameters);
+
+        expect(execMock).toHaveBeenCalledTimes(4);
+        expect(execMock).toHaveBeenNthCalledWith(1, "npm install -g @ionic/app-scripts@^3.1.9");
+        expect(execMock).toHaveBeenNthCalledWith(2, "npm install -g test@1.2.3");
+        expect(execMock).toHaveBeenNthCalledWith(3, "npm install");
+        expect(execMock).toHaveBeenNthCalledWith(4, "npm run build");
+    })
+
+    it('with empty global packages', async () => {
+        const parameters: npm.NpmParameters = {
+            globalPackages: []
+        };
+
+        const execMock = jest.spyOn(exec, "exec");
+        await npm.build(parameters);
+
+        expect(execMock).toHaveBeenCalledTimes(2);
+        expect(execMock).toHaveBeenNthCalledWith(1, "npm install");
+        expect(execMock).toHaveBeenNthCalledWith(2, "npm run build");
+    })
 })
