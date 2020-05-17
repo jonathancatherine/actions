@@ -6,12 +6,12 @@ export interface NpmParameters {
 }
 
 export async function build(params: NpmParameters): Promise<void> {
-    const folderInstall = params.folder ? ` ${params.folder}` : '';
-    const folderRun = params.folder ? ` --prefix ${params.folder}` : '';
+    const folderInstall = params.folder ? `cd ${params.folder};` : '';
+    //const folderRun = params.folder ? ` --prefix ${params.folder}` : '';
     const globalPackages = params.globalPackages;
 
     if (params.folder) {
-        await exec.exec(`head -20 ${params.folder}/package.json`);
+       await exec.exec(`head -10 ${params.folder}/package.json`);
     }
 
 
@@ -22,6 +22,6 @@ export async function build(params: NpmParameters): Promise<void> {
     }
 
 
-    await exec.exec(`npm install${folderInstall}`);
-    await exec.exec(`npm run${folderRun} build`);
+    await exec.exec(`${folderInstall}npm install`);
+    await exec.exec(`${folderInstall}npm run build`);
 }

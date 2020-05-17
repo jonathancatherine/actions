@@ -25,9 +25,9 @@ describe('buildAndPush tests', () => {
         await npm.build(parameters);
 
         expect(execMock).toHaveBeenCalledTimes(3);
-        expect(execMock).toHaveBeenNthCalledWith(1, "head -20 test-folder/package.json");
-        expect(execMock).toHaveBeenNthCalledWith(2, "npm install test-folder");
-        expect(execMock).toHaveBeenNthCalledWith(3, "npm run --prefix test-folder build");
+        expect(execMock).toHaveBeenNthCalledWith(1, "head -10 test-folder/package.json");
+        expect(execMock).toHaveBeenNthCalledWith(2, "cd test-folder;npm install");
+        expect(execMock).toHaveBeenNthCalledWith(3, "cd test-folder;npm run build");
     })
 
 
