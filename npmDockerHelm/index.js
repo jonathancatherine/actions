@@ -11342,11 +11342,11 @@ function build(params) {
         }
         if (params.folder) {
             yield exec.exec(`npm install`, [], { cwd: params.folder });
-            yield exec.exec(`npm run build`, [], { cwd: params.folder });
+            yield exec.exec(`npm run build --prod`, [], { cwd: params.folder });
         }
         else {
             yield exec.exec(`npm install`);
-            yield exec.exec(`npm run build`);
+            yield exec.exec(`npm run build --prod`);
         }
     });
 }

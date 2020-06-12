@@ -23,9 +23,9 @@ export async function build(params: NpmParameters): Promise<void> {
 
     if (params.folder) {
         await exec.exec(`npm install`, [], {cwd: params.folder});
-        await exec.exec(`npm run build`, [], {cwd: params.folder});
+        await exec.exec(`npm run build --prod`, [], {cwd: params.folder});
     } else {
         await exec.exec(`npm install`);
-        await exec.exec(`npm run build`);
+        await exec.exec(`npm run build --prod`);
     }
 }
