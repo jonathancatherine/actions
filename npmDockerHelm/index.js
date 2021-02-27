@@ -3703,9 +3703,11 @@ function npmBuild() {
     return __awaiter(this, void 0, void 0, function* () {
         const npmFolder = core.getInput('npmFolder');
         const npmGlobalPackages = core.getInput('npmGlobalPackages');
+        const npmInstall = core.getInput('npmInstall');
         const parameters = {
             folder: npmFolder,
-            globalPackages: npmGlobalPackages.split(",")
+            globalPackages: npmGlobalPackages.split(","),
+            install: npmInstall === 'true',
         };
         yield npm.build(parameters);
     });
@@ -11339,6 +11341,12 @@ function build(params) {
             for (let globalPackage of globalPackages) {
                 yield exec.exec(`npm install ${globalPackage}`);
             }
+        }
+        if (params.folder) {
+            yield exec.exec(`npm install --dev`, [], { cwd: params.folder });
+        }
+        else {
+            yield exec.exec(`npm install --dev`);
         }
         if (params.install) {
             if (params.folder) {

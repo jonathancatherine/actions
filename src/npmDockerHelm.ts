@@ -7,9 +7,11 @@ import {dockerBuild, gitOps} from "./steps";
 async function npmBuild() {
     const npmFolder = core.getInput('npmFolder');
     const npmGlobalPackages = core.getInput('npmGlobalPackages');
+    const npmInstall = core.getInput('npmInstall');
     const parameters: npm.NpmParameters = {
         folder:npmFolder,
-        globalPackages: npmGlobalPackages.split(",")
+        globalPackages: npmGlobalPackages.split(","),
+        install: npmInstall === 'true',
     };
     await npm.build(parameters);
 }

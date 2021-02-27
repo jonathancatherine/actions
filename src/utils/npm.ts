@@ -22,6 +22,13 @@ export async function build(params: NpmParameters): Promise<void> {
         }
     }
 
+
+    if (params.folder) {
+        await exec.exec(`npm install --dev`, [], {cwd: params.folder});
+    } else {
+        await exec.exec(`npm install --dev`);
+    }
+
     if (params.install) {
         if (params.folder) {
             await exec.exec(`npm install`, [], {cwd: params.folder});
