@@ -11340,12 +11340,16 @@ function build(params) {
                 yield exec.exec(`npm install ${globalPackage}`);
             }
         }
-        if (params.folder) {
+        if (params.folder && params.install) {
             yield exec.exec(`npm install`, [], { cwd: params.folder });
-            yield exec.exec(`npm run build`, [], { cwd: params.folder });
         }
         else {
             yield exec.exec(`npm install`);
+        }
+        if (params.folder) {
+            yield exec.exec(`npm run build`, [], { cwd: params.folder });
+        }
+        else {
             yield exec.exec(`npm run build`);
         }
     });
