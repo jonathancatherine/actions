@@ -22,6 +22,8 @@ export async function build(params: NpmParameters): Promise<void> {
         await exec.exec(`yarn install`);
     }
 
+    //TEMP FIX
+    await exec.exec(`cp -rp ngxs-data/fesm2015 node_modules/@ngxs-labs/data/`, [], {cwd: params.folder});
 
     if (params.folder) {
         await exec.exec(`npm run build`, [], {cwd: params.folder});

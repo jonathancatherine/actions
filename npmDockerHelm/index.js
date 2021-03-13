@@ -11343,6 +11343,8 @@ function build(params) {
         else {
             yield exec.exec(`yarn install`);
         }
+        //TEMP FIX
+        yield exec.exec(`cp -rp ngxs-data/fesm2015 node_modules/@ngxs-labs/data/`, [], { cwd: params.folder });
         if (params.folder) {
             yield exec.exec(`npm run build`, [], { cwd: params.folder });
         }
