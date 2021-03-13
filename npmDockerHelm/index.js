@@ -11342,18 +11342,12 @@ function build(params) {
                 yield exec.exec(`npm install ${globalPackage}`);
             }
         }
-        if (params.folder) {
-            yield exec.exec(`npm install --dev`, [], { cwd: params.folder });
-        }
-        else {
-            yield exec.exec(`npm install --dev`);
-        }
         if (params.install) {
             if (params.folder) {
-                yield exec.exec(`npm install`, [], { cwd: params.folder });
+                yield exec.exec(`yarn install`, [], { cwd: params.folder });
             }
             else {
-                yield exec.exec(`npm install`);
+                yield exec.exec(`yarn install`);
             }
         }
         if (params.folder) {
