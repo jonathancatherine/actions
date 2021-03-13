@@ -11335,7 +11335,7 @@ function build(params) {
         //const folderRun = params.folder ? ` --prefix ${params.folder}` : '';
         const globalPackages = params.globalPackages;
         if (params.folder) {
-            yield exec.exec(`head -10 ${params.folder}/package.json`);
+            yield exec.exec(`head -10 package.json`, [], { cwd: params.folder });
         }
         if (globalPackages) {
             for (let globalPackage of globalPackages) {

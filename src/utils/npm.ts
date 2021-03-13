@@ -12,7 +12,7 @@ export async function build(params: NpmParameters): Promise<void> {
     const globalPackages = params.globalPackages;
 
     if (params.folder) {
-        await exec.exec(`head -10 ${params.folder}/package.json`);
+        await exec.exec(`head -10 package.json`, [], {cwd: params.folder});
     }
 
 
