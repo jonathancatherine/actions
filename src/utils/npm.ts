@@ -16,19 +16,12 @@ export async function build(params: NpmParameters): Promise<void> {
     }
 
 
-    if (globalPackages) {
-        for (let globalPackage of globalPackages) {
-            await exec.exec(`npm install ${globalPackage}`);
-        }
+    if (params.folder) {
+        await exec.exec(`yarn install`, [], {cwd: params.folder});
+    } else {
+        await exec.exec(`yarn install`);
     }
 
-    if (params.install) {
-        if (params.folder) {
-            await exec.exec(`yarn install`, [], {cwd: params.folder});
-        } else {
-            await exec.exec(`yarn install`);
-        }
-    }
 
     if (params.folder) {
         await exec.exec(`npm run build`, [], {cwd: params.folder});

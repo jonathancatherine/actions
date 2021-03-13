@@ -11337,18 +11337,11 @@ function build(params) {
         if (params.folder) {
             yield exec.exec(`head -10 package.json`, [], { cwd: params.folder });
         }
-        if (globalPackages) {
-            for (let globalPackage of globalPackages) {
-                yield exec.exec(`npm install ${globalPackage}`);
-            }
+        if (params.folder) {
+            yield exec.exec(`yarn install`, [], { cwd: params.folder });
         }
-        if (params.install) {
-            if (params.folder) {
-                yield exec.exec(`yarn install`, [], { cwd: params.folder });
-            }
-            else {
-                yield exec.exec(`yarn install`);
-            }
+        else {
+            yield exec.exec(`yarn install`);
         }
         if (params.folder) {
             yield exec.exec(`npm run build`, [], { cwd: params.folder });
