@@ -4143,7 +4143,7 @@ function jibBuild(tag) {
         const dockerRegistryPassword = core.getInput('dockerRegistryPassword');
         const jibFromImage = core.getInput('jibFromImage') || "adoptopenjdk/openjdk8-openj9:latest";
         const parameters = {
-            jibVersion: "2.2.0",
+            jibVersion: "2.8.0",
             mavenPomFile: jibMavenPomFile,
             fromImage: jibFromImage,
             registryHost: dockerRegistryHost,

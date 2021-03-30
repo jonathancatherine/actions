@@ -59,7 +59,7 @@ export async function jibBuild(tag: string): Promise<void> {
     const jibFromImage = core.getInput('jibFromImage') || "adoptopenjdk/openjdk8-openj9:latest"
 
     const parameters: jib.JibParameters = {
-        jibVersion: "2.2.0",
+        jibVersion: "2.8.0",
         mavenPomFile: jibMavenPomFile,
         fromImage: jibFromImage,
         registryHost: dockerRegistryHost,
