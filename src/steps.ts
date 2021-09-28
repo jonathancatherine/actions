@@ -110,6 +110,14 @@ export async function gitOps(githubPayload: any, dockerTag: string): Promise<voi
         };
     }
 
+    if (gitOpsType === 'ValuesFile') {
+        modifierFunction = value => {
+            const valueWithTag = util.replaceValueInYamlString(value, "image.tag", dockerTag);
+            const finalValue = util.replaceValueInYamlString(valueWithTag, "image.repository", dockerImageRepository);
+            return finalValue;
+        };
+    }
+
     const remoteFileModificationOptions: git.RemoteFileModificationOptions = {
         branch: gitOpsBranch,
         octokit: octokit,

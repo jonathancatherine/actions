@@ -4190,6 +4190,13 @@ function gitOps(githubPayload, dockerTag) {
                 return finalValue;
             };
         }
+        if (gitOpsType === 'ValuesFile') {
+            modifierFunction = value => {
+                const valueWithTag = util.replaceValueInYamlString(value, "image.tag", dockerTag);
+                const finalValue = util.replaceValueInYamlString(valueWithTag, "image.repository", dockerImageRepository);
+                return finalValue;
+            };
+        }
         const remoteFileModificationOptions = {
             branch: gitOpsBranch,
             octokit: octokit,
